@@ -1,4 +1,12 @@
+using BackEnd.Configs.Enviroments;
+
 var builder = WebApplication.CreateBuilder(args);
+
+//bonus config
+//Addconsole logging
+builder.Logging.AddConsole();
+//Add Database Connection
+builder.Services.ConfigureDatabase(DatabaseConnection.GetConnectionDatabaseString());
 
 // Add services to the container.
 

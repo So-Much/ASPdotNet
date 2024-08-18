@@ -1,0 +1,38 @@
+<script setup>
+
+</script>
+
+<template>
+    <!-- Header section  -->
+	<header class="header-section">
+		<a href="index.html" class="site-logo"><img src="./../../public/img/logo.png" alt="logo"></a>
+		<div class="header-controls">
+			<button class="nav-switch-btn"><i class="fa fa-bars"></i></button>
+			<button class="search-btn"><i class="fa fa-search"></i></button>
+		</div>
+		<ul class="main-menu">
+			<li><a href="index.html">Home</a></li>
+			<li><a href="about.html">About the Artist </a></li>
+			<li>
+				<a href="#">Portfolio</a>
+				<ul class="sub-menu">
+					<li><a href="portfolio.html">Portfolio 1</a></li>
+					<li><a href="portfolio-1.html">Portfolio 2</a></li>
+					<li><a href="portfolio-2.html">Portfolio 3</a></li>
+				</ul>
+			</li>
+			<li><a href="blog.html">Blog</a></li>
+			<li><a href="elements.html">Elements</a></li>
+			<li><a href="contact.html">Contact</a></li>
+			<li class="search-mobile">
+				<button class="search-btn"><i class="fa fa-search"></i></button>
+			</li>
+		</ul>
+	</header>
+	<div class="clearfix"></div>
+	<!-- Header section end  -->
+</template>
+
+<style scoped>
+
+</style>
