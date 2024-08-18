@@ -5,7 +5,7 @@ import IntroSection from '@/components/IntroSection.vue';
 import FooterSection from '@/components/FooterSection.vue';
 import SearchModel from '@/components/SearchModel.vue';
 
-import { importedScripts } from '@/configs/ImportScripts';
+import { importedScripts } from '@/utils/ImportScripts';
 import { onMounted } from 'vue';
 onMounted(() => {
     importedScripts()

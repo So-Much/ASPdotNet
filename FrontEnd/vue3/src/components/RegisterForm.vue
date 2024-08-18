@@ -1,25 +1,27 @@
 <script setup>
-import { axios } from '@/configs';
-import { onMounted } from 'vue';
-
-onMounted(() => {
-    axios.get('/api/user')
-    .then(res => {
-        console.log(res);
-    }).catch(err => {
-        console.log(err);
-    })
-});
 
 </script>
 
 <template>
-    <div class="login-form">
+    <div class="register-form">
         <div class="container">
             <div class="header">
-                <h1>Sign In</h1>
+                <h1>Sign Up</h1>
             </div>
             <form class="form">
+                <div class="flex-column">
+                    <label>Name </label>
+                </div>
+                <div class="inputForm">
+                    <svg height="60" viewBox="0 -9 32 32" width="40" xmlns="http://www.w3.org/2000/svg">
+                        <g id="Layer_3" data-name="Layer 3">
+                            <path
+                                d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z">
+                            </path>
+                        </g>
+                    </svg>
+                    <input type="text" class="input" placeholder="Enter your Name" />
+                </div>
                 <div class="flex-column">
                     <label>Email </label>
                 </div>
@@ -48,9 +50,23 @@ onMounted(() => {
                     </svg>
                     <input type="password" class="input" placeholder="Enter your Password" />
                 </div>
+                <div class="flex-column">
+                    <label>Repeat Password</label>
+                </div>
+                <div class="inputForm">
+                    <svg height="20" viewBox="-64 0 512 512" width="20" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="m336 512h-288c-26.453125 0-48-21.523438-48-48v-224c0-26.476562 21.546875-48 48-48h288c26.453125 0 48 21.523438 48 48v224c0 26.476562-21.546875 48-48 48zm-288-288c-8.8125 0-16 7.167969-16 16v224c0 8.832031 7.1875 16 16 16h288c8.8125 0 16-7.167969 16-16v-224c0-8.832031-7.1875-16-16-16zm0 0">
+                        </path>
+                        <path
+                            d="m304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969 16-16 16s-16-7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0">
+                        </path>
+                    </svg>
+                    <input type="password" class="input" placeholder="Retype your Password" />
+                </div>
 
-                <button class="button-submit">Sign In</button>
-                <p class="p">Don't have a account? <span class="span"><router-link to="/register">Register</router-link></span></p>
+                <button class="button-submit">Sign Up</button>
+                <p class="p">Already have a account? <span class="span"><router-link to="login">Login</router-link></span></p>
                 <div class="flex-row">
                     <button class="btn google">
                         <svg version="1.1" width="20" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
@@ -79,7 +95,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.login-form {
+.register-form {
     max-width: 80%;
     margin-left: auto;
     margin-right: auto;
