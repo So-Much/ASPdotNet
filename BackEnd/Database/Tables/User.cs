@@ -9,6 +9,7 @@ namespace BackEnd.Database.Tables
     {
         [Key]
         public int Id { get; set; }
+        public string UID { get; set; } = "";
         public Contact? Contact { get; set; }
 
         [Required]

@@ -1,6 +1,6 @@
 ﻿using BackEnd.Database;
 using BackEnd.Database.Tables;
-using Microsoft.AspNetCore.Http.HttpResults;
+using BackEnd.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +25,16 @@ namespace BackEnd.Controllers.Users
             {
                 var users = await _DbContext.Users
                     .Include(u => u.Contact)
+                    .Select(u => new UserDTO
+                    {
+                        UID = u.UID,
+                        Name = u.Name,
+                        Email = u.Email,
+                        Password = u.Password,
+                        Bio = u.Bio,
+                        Roles = u.Roles.Select(r => r.ToString()).ToArray(),
+                        Contact = u.Contact
+                    })
                     .ToListAsync();
 
                 return Ok(users);
@@ -35,18 +45,29 @@ namespace BackEnd.Controllers.Users
                 return BadRequest("An Error when get all Users");
             }
         }
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        [HttpGet("{UID}")]
+        public async Task<ActionResult<User>> GetUser(string UID)
         {
             try
             {
-                var user = await _DbContext.Users.Include(u => u.Contact)
-                    .FirstOrDefaultAsync(u => u.Id == id);
-                if (user == null)
+                var userDTO = await _DbContext.Users.Include(u => u.Contact)
+                    .Where(u => u.UID.Equals(UID))
+                    .Select(u => new UserDTO
+                    {
+                        UID = u.UID,
+                        Name = u.Name,
+                        Email = u.Email,
+                        Password = u.Password,
+                        Bio = u.Bio,
+                        Roles = u.Roles.Select(r => r.ToString()).ToArray(),
+                        Contact = u.Contact
+                    })
+                    .FirstOrDefaultAsync();
+                if (userDTO == null)
                 {
                     return NotFound();
                 }
-                return Ok(user);
+                return Ok(userDTO);
             }
             catch (Exception ex)
             {
@@ -54,34 +75,34 @@ namespace BackEnd.Controllers.Users
                 return StatusCode(500, "Error when find product by id!");
             }
         }
-        [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
-        {
-            try
-            {
-                //Veryfied user if necessary
-                await _DbContext.Users.AddAsync(user);
-                await _DbContext.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetUser),new { id = user.Id }, user);
+        //[HttpPost]
+        //public async Task<ActionResult<User>> PostUser(User user)
+        //{
+        //    try
+        //    {
+        //        //Veryfied user if necessary
+        //        await _DbContext.Users.AddAsync(user);
+        //        await _DbContext.SaveChangesAsync();
+        //        return CreatedAtAction(nameof(GetUser),new { UID = user.UID }, user);
 
 
-                //// Kiểm tra và tạo Contact nếu không có sẵn
-                //if (user.Contact != null)
-                //{
-                //    user.Contact.UserId = user.Id; // Liên kết Contact với User
-                //    _DbContext.Contacts.Add(user.Contact);
-                //}
+        //        //// Kiểm tra và tạo Contact nếu không có sẵn
+        //        //if (user.Contact != null)
+        //        //{
+        //        //    user.Contact.UserId = user.Id; // Liên kết Contact với User
+        //        //    _DbContext.Contacts.Add(user.Contact);
+        //        //}
 
-                //_DbContext.Users.Add(user);
-                //await _DbContext.SaveChangesAsync();
+        //        //_DbContext.Users.Add(user);
+        //        //await _DbContext.SaveChangesAsync();
 
-                //return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message.ToString());
-                return StatusCode(500, "Error when add user!");
-            }
-        }
+        //        //return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex.Message.ToString());
+        //        return StatusCode(500, "Error when add user!");
+        //    }
+        //}
     }
 }

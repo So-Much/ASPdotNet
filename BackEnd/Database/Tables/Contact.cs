@@ -9,7 +9,7 @@ namespace BackEnd.Database.Tables
     {
         [Key]
         public int Id { get; set; }
-        public int? UserId { get; set; }
+        public int? FK_UserId { get; set; }
         [JsonIgnore]
         public User? User { get; set; }
 

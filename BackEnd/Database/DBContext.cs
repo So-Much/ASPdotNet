@@ -15,7 +15,7 @@ namespace BackEnd.Database
             modelBuilder.Entity<Tables.User>()
                 .HasOne(u => u.Contact)
                 .WithOne(c => c.User)
-                .HasForeignKey<Tables.Contact>(c => c.UserId)
+                .HasForeignKey<Tables.Contact>(c => c.FK_UserId)
                 .IsRequired(false);
         }
     }

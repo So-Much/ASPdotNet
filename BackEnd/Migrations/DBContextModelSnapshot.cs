@@ -30,6 +30,9 @@ namespace BackEnd.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("FK_UserId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("text");
@@ -42,12 +45,9 @@ namespace BackEnd.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
+                    b.HasIndex("FK_UserId")
                         .IsUnique();
 
                     b.ToTable("Contacts");
@@ -85,6 +85,10 @@ namespace BackEnd.Migrations
                         .IsRequired()
                         .HasColumnType("integer[]");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.ToTable("Users");
@@ -94,7 +98,7 @@ namespace BackEnd.Migrations
                 {
                     b.HasOne("BackEnd.Database.Tables.User", "User")
                         .WithOne("Contact")
-                        .HasForeignKey("BackEnd.Database.Tables.Contact", "UserId");
+                        .HasForeignKey("BackEnd.Database.Tables.Contact", "FK_UserId");
 
                     b.Navigation("User");
                 });

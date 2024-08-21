@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BackEnd.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20240816132118_ef_core_1")]
-    partial class ef_core_1
+    [Migration("20240821160605_initial_migration")]
+    partial class initial_migration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,6 +33,9 @@ namespace BackEnd.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("FK_UserId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("text");
@@ -45,12 +48,9 @@ namespace BackEnd.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
+                    b.HasIndex("FK_UserId")
                         .IsUnique();
 
                     b.ToTable("Contacts");
@@ -88,6 +88,10 @@ namespace BackEnd.Migrations
                         .IsRequired()
                         .HasColumnType("integer[]");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.ToTable("Users");
@@ -97,7 +101,7 @@ namespace BackEnd.Migrations
                 {
                     b.HasOne("BackEnd.Database.Tables.User", "User")
                         .WithOne("Contact")
-                        .HasForeignKey("BackEnd.Database.Tables.Contact", "UserId");
+                        .HasForeignKey("BackEnd.Database.Tables.Contact", "FK_UserId");
 
                     b.Navigation("User");
                 });

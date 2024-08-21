@@ -7,6 +7,11 @@ const routes = [
     component: HomePage
   },
   {
+    path: '/store',
+    name: 'store',
+    component: () => import('../views/StorePage.vue')
+  },
+  {
     path: '/login',
     name: 'login',
     // route level code-splitting
@@ -20,8 +25,8 @@ const routes = [
     component: () => import('../views/RegisterPage.vue')
   },
   {
-    path: '/portfolio',
-    name: 'portfolio',
+    path: '/my-portfolio',
+    name: 'my-portfolio',
     component: () => import('../views/PortfolioPage.vue')
   }
 ]

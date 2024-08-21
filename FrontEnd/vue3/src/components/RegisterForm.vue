@@ -1,5 +1,61 @@
 <script setup>
+import { reactive } from 'vue';
+import { confirmPassword, emailRegular, passwordValidationError } from '@/utils/rules';
+import { axios } from '@/configs';
+import { useToast } from 'vue-toastification';
+import { useRouter } from 'vue-router';
 
+// hooks
+const toast = useToast();
+const router = useRouter();
+
+const user = reactive({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+});
+
+// Validate the form
+function validateForm(user) {
+    let errors = {
+        confirmPassword: confirmPassword(user.password, user.confirmPassword),
+        password: passwordValidationError(user.password),
+        email: emailRegular(user.email)
+    };
+
+    return errors;
+}
+
+// Display errors
+function displayErrors(errors) {
+    document.querySelector('.confirmpassword-error').innerHTML = errors.confirmPassword;
+    document.querySelector('.password-error').innerHTML = errors.password;
+    document.querySelector('.email-error').innerHTML = errors.email;
+}
+
+// Handle register
+const register = (event) => {
+    event.preventDefault();
+    const errors = validateForm(user);
+    const hasErrors = Object.values(errors).some(error => error !== null);
+    if (hasErrors) {
+        displayErrors(errors);
+    } else {
+        axios.post('/api/register', {
+            name: user.name,
+            email: user.email,
+            password: user.password
+        }).then((response) => {
+            if (response.status === 200) {
+                toast.success("Register successfully");
+                router.push('/login');
+            }
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+}
 </script>
 
 <template>
@@ -20,8 +76,9 @@
                             </path>
                         </g>
                     </svg>
-                    <input type="text" class="input" placeholder="Enter your Name" />
+                    <input type="text" v-model="user.name" class="input" placeholder="Enter your Name" />
                 </div>
+                <span class="name-error error"></span>
                 <div class="flex-column">
                     <label>Email </label>
                 </div>
@@ -33,9 +90,9 @@
                             </path>
                         </g>
                     </svg>
-                    <input type="text" class="input" placeholder="Enter your Email" />
+                    <input type="text" v-model="user.email" class="input" placeholder="Enter your Email" />
                 </div>
-
+                <span class="email-error error"></span>
                 <div class="flex-column">
                     <label>Password </label>
                 </div>
@@ -48,10 +105,11 @@
                             d="m304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969 16-16 16s-16-7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0">
                         </path>
                     </svg>
-                    <input type="password" class="input" placeholder="Enter your Password" />
+                    <input type="password" v-model="user.password" class="input" placeholder="Enter your Password" />
                 </div>
+                <span class="password-error error"></span>
                 <div class="flex-column">
-                    <label>Repeat Password</label>
+                    <label>ConfirmPassword</label>
                 </div>
                 <div class="inputForm">
                     <svg height="20" viewBox="-64 0 512 512" width="20" xmlns="http://www.w3.org/2000/svg">
@@ -62,11 +120,14 @@
                             d="m304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969 16-16 16s-16-7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0">
                         </path>
                     </svg>
-                    <input type="password" class="input" placeholder="Retype your Password" />
+                    <input type="password" v-model="user.confirmPassword" class="input"
+                        placeholder="Retype your Password" />
                 </div>
+                <span class="confirmpassword-error error"></span>
 
-                <button class="button-submit">Sign Up</button>
-                <p class="p">Already have a account? <span class="span"><router-link to="login">Login</router-link></span></p>
+                <button class="button-submit" @click="register">Sign Up</button>
+                <p class="p">Already have a account? <span class="span"><router-link
+                            to="login">Login</router-link></span></p>
                 <div class="flex-row">
                     <button class="btn google">
                         <svg version="1.1" width="20" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
@@ -231,5 +292,10 @@
 
 .btn:hover {
     border: 1px solid #2d79f3;
+}
+
+.error {
+    color: red;
+    transition: 0.2s ease-in-out;
 }
 </style>
