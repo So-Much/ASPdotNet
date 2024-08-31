@@ -6,10 +6,13 @@ var env = new EnviromentVariables();
 //bonus config
 //Addconsole logging
 builder.Logging.AddConsole();
-//Add Database Connection
-builder.Services.ConfigureDatabase(env.GetConnectionString());
 
-// Add services to the container.
+//Configures
+//PostgreSQL
+builder.Services.ConfigureDatabase(env.GetConnectionString());
+//JWT
+builder.Services.ConfigureJwt(env.GetJwtKey());
+
 // Add services to the container.
 builder.Services.AddCors(options =>
 {
@@ -39,6 +42,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseAuthentication();
 
 app.MapControllers();
 

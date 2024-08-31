@@ -14,6 +14,9 @@
         {
             return DotNetEnv.Env.GetString("SECRET_KEY", "SecretKey is not exists!!!");
         }
-
+        public string GetJwtKey()
+        {
+            return DotNetEnv.Env.GetString("JWT_KEY", "JwtKey is not exists!!!");
+        }
     }
 }

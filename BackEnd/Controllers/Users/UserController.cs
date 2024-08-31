@@ -1,6 +1,7 @@
 ﻿using BackEnd.Database;
 using BackEnd.Database.Tables;
 using BackEnd.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -75,34 +76,78 @@ namespace BackEnd.Controllers.Users
                 return StatusCode(500, "Error when find product by id!");
             }
         }
-        //[HttpPost]
-        //public async Task<ActionResult<User>> PostUser(User user)
-        //{
-        //    try
-        //    {
-        //        //Veryfied user if necessary
-        //        await _DbContext.Users.AddAsync(user);
-        //        await _DbContext.SaveChangesAsync();
-        //        return CreatedAtAction(nameof(GetUser),new { UID = user.UID }, user);
+        [Authorize(Roles = "ADMIN")]
+        [HttpPost]
+        public async Task<ActionResult<User>> PostUser(User user)
+        {
+            try
+            {
+                //Veryfied user if necessary
+                await _DbContext.Users.AddAsync(user);
+                await _DbContext.SaveChangesAsync();
+                return CreatedAtAction(nameof(GetUser), new { UID = user.UID }, user);
 
 
-        //        //// Kiểm tra và tạo Contact nếu không có sẵn
-        //        //if (user.Contact != null)
-        //        //{
-        //        //    user.Contact.UserId = user.Id; // Liên kết Contact với User
-        //        //    _DbContext.Contacts.Add(user.Contact);
-        //        //}
+                //// Kiểm tra và tạo Contact nếu không có sẵn
+                //if (user.Contact != null)
+                //{
+                //    user.Contact.UserId = user.Id; // Liên kết Contact với User
+                //    _DbContext.Contacts.Add(user.Contact);
+                //}
 
-        //        //_DbContext.Users.Add(user);
-        //        //await _DbContext.SaveChangesAsync();
+                //_DbContext.Users.Add(user);
+                //await _DbContext.SaveChangesAsync();
 
-        //        //return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message.ToString());
-        //        return StatusCode(500, "Error when add user!");
-        //    }
-        //}
+                //return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString());
+                return StatusCode(500, "Error when add user!");
+            }
+        }
+        [Authorize(Roles = "ADMIN")]
+        [HttpPut("{UID}")]
+        public async Task<ActionResult<User>> PutUser(string UID, User user)
+        {
+            if (UID != user.UID)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                //change information of that user and save that user to return for update client side
+                _DbContext.Entry(user).State = EntityState.Modified;
+                await _DbContext.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString());
+                return StatusCode(500, "Error when update user!");
+            }
+            return Ok(user);
+        }
+        [Authorize(Roles = "ADMIN")]
+        [HttpDelete("{UID}")]
+        public async Task<ActionResult<User>> DeleteUser(string UID)
+        {
+            var user = await _DbContext.Users.FindAsync(UID);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            try
+            {
+                _DbContext.Users.Remove(user);
+                await _DbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString());
+                return StatusCode(500, "Error when delete user!");
+            }
+            return Ok("User is Deleted!");
+        }
     }
 }

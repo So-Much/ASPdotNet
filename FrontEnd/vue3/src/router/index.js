@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomePage from '@/views/HomePage.vue';
+import HomePage from '@/views/client/HomePage.vue';
 const routes = [
   {
     path: '/',
@@ -9,7 +9,7 @@ const routes = [
   {
     path: '/store',
     name: 'store',
-    component: () => import('../views/StorePage.vue')
+    component: () => import('../views/client/StorePage.vue')
   },
   {
     path: '/login',
@@ -17,17 +17,28 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/LoginPage.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/client/LoginPage.vue')
   },
   {
     path: '/register',
     name: 'register',
-    component: () => import('../views/RegisterPage.vue')
+    component: () => import('../views/client/RegisterPage.vue')
   },
   {
     path: '/my-portfolio',
     name: 'my-portfolio',
-    component: () => import('../views/PortfolioPage.vue')
+    component: () => import('../views/client/PortfolioPage.vue')
+  },
+  // dashboard routes
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: () => import('../views/dashboard/DashboardPage.vue'),
+  },
+  {
+    path: '/dashboard/products',
+    name: 'admin_products',
+    component: () => import('../views/dashboard/ProductsPage.vue'),
   }
 ]
 

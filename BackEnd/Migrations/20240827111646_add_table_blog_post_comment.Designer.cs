@@ -3,6 +3,7 @@ using System;
 using BackEnd.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BackEnd.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20240827111646_add_table_blog_post_comment")]
+    partial class add_table_blog_post_comment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,7 +58,7 @@ namespace BackEnd.Migrations
 
                     b.HasIndex("FK_UserId");
 
-                    b.ToTable("Blogs");
+                    b.ToTable("Blog");
                 });
 
             modelBuilder.Entity("BackEnd.Database.Tables.Comment", b =>
@@ -88,7 +91,7 @@ namespace BackEnd.Migrations
 
                     b.HasIndex("FK_UserId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comment");
                 });
 
             modelBuilder.Entity("BackEnd.Database.Tables.Contact", b =>
@@ -173,7 +176,7 @@ namespace BackEnd.Migrations
 
                     b.HasIndex("FK_BlogId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Post");
                 });
 
             modelBuilder.Entity("BackEnd.Database.Tables.Product", b =>
