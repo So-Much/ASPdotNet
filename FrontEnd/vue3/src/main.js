@@ -7,7 +7,7 @@ import Toast from 'vue-toastification';
 import "vue-toastification/dist/index.css";
 
 const options = {
-    // You can set your default options here
+    // You can set your default vue-toastification options here
 };
 
 createApp(App)

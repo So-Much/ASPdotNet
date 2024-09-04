@@ -29,6 +29,11 @@ const routes = [
     name: 'my-portfolio',
     component: () => import('../views/client/PortfolioPage.vue')
   },
+  {
+    path: '/blogs',
+    name: 'blogs',
+    component: () => import('../views/client/BlogsPot.vue')
+  },
   // dashboard routes
   {
     path: '/dashboard',
@@ -39,6 +44,11 @@ const routes = [
     path: '/dashboard/products',
     name: 'admin_products',
     component: () => import('../views/dashboard/ProductsPage.vue'),
+  },
+  {
+    path: '/dashboard/blogs',
+    name: 'admin_blogs',
+    component: () => import('../views/dashboard/BlogsPage.vue'),
   }
 ]
 

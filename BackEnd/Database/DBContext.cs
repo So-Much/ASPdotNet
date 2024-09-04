@@ -8,6 +8,9 @@ namespace BackEnd.Database
         
         //Add tables here
         public DbSet<Tables.User> Users { get; set; }
+        public DbSet<Tables.Admin> Admins { get; set; }
+        public DbSet<Tables.Customer> Customers { get; set; }
+        public DbSet<Tables.Photographer> Photographers { get; set; }
         public DbSet<Tables.Contact> Contacts { get; set; }
         public DbSet<Tables.Product> Products { get; set; }
         public DbSet<Tables.Blog> Blogs { get; set; }
@@ -16,6 +19,13 @@ namespace BackEnd.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //inheritance of User table
+            modelBuilder.Entity<Tables.User>()
+                .HasDiscriminator<string>("UserType")
+                .HasValue<Tables.Admin>("Admin")
+                .HasValue<Tables.Customer>("Customer")
+                .HasValue<Tables.Photographer>("Photographer");
+
             //user-contact Fluent API
             modelBuilder.Entity<Tables.User>()
                 .HasOne(u => u.Contact)
