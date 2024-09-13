@@ -21,13 +21,13 @@ onUnmounted(() => {
 
 <template>
     <BannerBlog 
-    blog_title="Stand Blog" 
-    blog_description="A free blog template by TemplateMo website" 
+    blog_name="Stand Blog" 
+    blog_title="A free blog template by TemplateMo website" 
     />
     <BlogTitle 
     author_name="Glilbert Bellamy Salander"
     author_role="User"
-    author_intro="I'm newbie in photography, but I'm trying to learn more and more"
+    blog_description="Sharing a best trip to the world"
     />
     <BlogPosts />
     <FooterSection />

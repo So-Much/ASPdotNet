@@ -4,7 +4,7 @@ const props = defineProps({
   // Normal property declarations
   author_name: String,
   author_role: String,
-  author_intro: String,
+  blog_description: String,
   // Styles property declarations
    styles: Object
 });
@@ -24,7 +24,7 @@ for(const selector in props.styles) {
               <div class="row">
                 <div class="col-lg-8">
                   <span>{{ `${author_name} | ${author_role}` }}</span>
-                  <h4>{{ author_intro }}</h4>
+                  <h4>{{ blog_description }}</h4>
                 </div>
                 <div class="col-lg-4">
                   <div class="main-button">

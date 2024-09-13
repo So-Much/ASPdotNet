@@ -12,12 +12,13 @@
     <router-link to="/dashboard">Dashboard</router-link>
     <router-link to="/dashboard/products">Products</router-link>
     <router-link to="/dashboard/blogs">Blogs Admin</router-link>
+    <router-link to="/post/create">Editor</router-link>
   </div>
   <router-view />
 </template>
 
 <style scoped>
-@import "./global.css";
+/* @import "./global.css"; */
 
 #app {
   display: flex;

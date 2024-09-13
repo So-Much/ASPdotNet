@@ -3,8 +3,8 @@
 import { defineProps, onMounted } from 'vue';
 const props = defineProps({
   // Normal property declarations
+   blog_name: String,
    blog_title: String,
-   blog_description: String,
   // Styles property declarations
    styles: Object
 });
@@ -22,8 +22,8 @@ for(const selector in props.styles) {
           <div class="row">
             <div class="col-lg-12">
               <div class="text-content">
-                <h4>{{ blog_title }}</h4>
-                <h2>{{ blog_description }}</h2>
+                <h4>{{ blog_name }}</h4>
+                <h2>{{ blog_title }}</h2>
               </div>
             </div>
           </div>

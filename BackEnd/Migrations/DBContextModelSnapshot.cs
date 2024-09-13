@@ -247,9 +247,58 @@ namespace BackEnd.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("UserType")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("character varying(13)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasDiscriminator<string>("UserType").HasValue("User");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("BackEnd.Database.Tables.Admin", b =>
+                {
+                    b.HasBaseType("BackEnd.Database.Tables.User");
+
+                    b.HasDiscriminator().HasValue("Admin");
+                });
+
+            modelBuilder.Entity("BackEnd.Database.Tables.Customer", b =>
+                {
+                    b.HasBaseType("BackEnd.Database.Tables.User");
+
+                    b.Property<int>("history_cost")
+                        .HasColumnType("integer");
+
+                    b.HasDiscriminator().HasValue("Customer");
+                });
+
+            modelBuilder.Entity("BackEnd.Database.Tables.Photographer", b =>
+                {
+                    b.HasBaseType("BackEnd.Database.Tables.User");
+
+                    b.Property<string>("Camera")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Lens")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Portfolio")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Specialization")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasDiscriminator().HasValue("Photographer");
                 });
 
             modelBuilder.Entity("BackEnd.Database.Tables.Blog", b =>

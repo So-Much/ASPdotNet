@@ -1,4 +1,13 @@
 <script setup>
+import { injectMainJS, removeMainJS } from '@/utils/asynchronous';
+import { onMounted, onUnmounted } from 'vue';
+
+onMounted(() => {
+    injectMainJS();
+});
+onUnmounted(() => {
+    removeMainJS();
+});
 </script>
 
 <template>

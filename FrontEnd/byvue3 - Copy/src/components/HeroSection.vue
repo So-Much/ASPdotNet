@@ -1,5 +1,5 @@
 <script setup>
-import PhotoBlogs from './minis/list_refs/PhotoBlogs.vue';
+import PhotoBlogs from './minis/PhotoBlogs.vue';
 
 const array = Array.from({ length: 21 }, (_, i) => i + 1);
 var array1 = array.slice(0, 7).map((item) => {

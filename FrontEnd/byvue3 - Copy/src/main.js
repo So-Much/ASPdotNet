@@ -4,6 +4,9 @@ import router from './router'
 import store from './store'
 import Toast from 'vue-toastification';
 
+/* import font awesome icon component */
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { CkeditorPlugin } from '@ckeditor/ckeditor5-vue';
 import "vue-toastification/dist/index.css";
 
 const options = {
@@ -11,6 +14,8 @@ const options = {
 };
 
 createApp(App)
+    .use(CkeditorPlugin)
+    .component('font-awesome-icon', FontAwesomeIcon)
     .use(store)
     .use(Toast, options)
     .use(router)

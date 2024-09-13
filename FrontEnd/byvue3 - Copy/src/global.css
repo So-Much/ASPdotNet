@@ -15,10 +15,10 @@ Usage: codyhouse.co/license
 }
 
 * {
-    font: inherit;
     margin: 0;
     padding: 0;
     border: 0;
+    scroll-behavior: smooth;
 }
 
 body {
@@ -51,23 +51,6 @@ h3 {
 
 h4 {
     font-size: 1.2rem;
-}
-
-ol,
-ul,
-menu {
-    list-style: none;
-}
-
-button,
-input,
-textarea,
-select {
-    background-color: transparent;
-    border-radius: 0;
-    color: inherit;
-    line-height: inherit;
-    appearance: none;
 }
 
 textarea {

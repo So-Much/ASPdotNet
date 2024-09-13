@@ -40,9 +40,11 @@ const routes = [
     component: () => import('../views/client/BlogDetail.vue')
   },
 
-
-
-
+  {
+    path: '/post/create',
+    name: 'createpost',
+    component: () => import('../views/client/CreatePost.vue'),
+  },
   // dashboard routes
   {
     path: '/dashboard',

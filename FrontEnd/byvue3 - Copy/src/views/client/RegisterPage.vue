@@ -1,6 +1,14 @@
 <script setup>
 import RegisterForm from '@/components/RegisterForm.vue';
+import { injectMainJS, removeMainJS } from '@/utils/asynchronous';
+import { onMounted, onUnmounted } from 'vue';
 
+onMounted(() => {
+    injectMainJS();
+});
+onUnmounted(() => {
+    removeMainJS();
+});
 
 </script>
 

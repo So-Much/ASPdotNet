@@ -1,11 +1,21 @@
 <script setup>
 import { axios } from '@/configs';
 import { onMounted } from 'vue';
+// import { useRouter } from 'vue-router';
+import { useToast } from 'vue-toastification';
+
+const toast = useToast();
+// const router = useRouter();
 
 onMounted(() => {
     axios.get('/api/user')
     .then(res => {
         console.log(res);
+        if (res.data.status === 'success') {
+            toast.success('Logged in successfully!');
+            // console.log()
+            // router.push('/');
+        }
     }).catch(err => {
         console.log(err);
     })

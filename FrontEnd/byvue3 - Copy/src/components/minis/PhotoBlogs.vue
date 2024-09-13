@@ -1,6 +1,13 @@
 <script setup>
-import { defineProps, onMounted } from 'vue';
-import PhotoBlog from '../refs/PhotoBlog.vue';
+import { defineProps, onMounted, onUnmounted } from 'vue';
+import PhotoBlog from './PhotoBlog.vue';
+import { injectMainJS, removeMainJS } from '@/utils/asynchronous';
+onMounted(() => {
+    injectMainJS();
+});
+onUnmounted(() => {
+    removeMainJS();
+});
 const props = defineProps({
     // Normal property declarations
     list_blog: Array,

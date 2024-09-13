@@ -1,7 +1,9 @@
 <script setup>
-import LoginForm from '@/components/LoginForm.vue';
+import PostForm from '@/components/PostForm.vue';
+
 import { injectMainJS, removeMainJS } from '@/utils/asynchronous';
 import { onMounted, onUnmounted } from 'vue';
+
 onMounted(() => {
     injectMainJS();
 });
@@ -11,13 +13,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="login-container">
-        <LoginForm />
-    </div>
+    <PostForm />
 </template>
 
 <style scoped>
-.login-container {
-    background-color: #F9F9F9;
-}
+
 </style>
