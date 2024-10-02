@@ -4,10 +4,12 @@ import { confirmPassword, emailRegular, passwordValidationError } from '@/utils/
 import { axios } from '@/configs';
 import { useToast } from 'vue-toastification';
 import { useRouter } from 'vue-router';
+import { useLoading } from 'vue-loading-overlay';
 
 // hooks
 const toast = useToast();
 const router = useRouter();
+const $loading = useLoading();
 
 const user = reactive({
     name: '',
@@ -35,23 +37,27 @@ function displayErrors(errors) {
 }
 
 // Handle register
-const register = (event) => {
-    event.preventDefault();
+const register = () => {
     const errors = validateForm(user);
     const hasErrors = Object.values(errors).some(error => error !== null);
     if (hasErrors) {
         displayErrors(errors);
     } else {
+        const loader = $loading.show()
         axios.post('/api/register', {
             name: user.name,
             email: user.email,
             password: user.password
         }).then((response) => {
+            loader.hide()
             if (response.status === 200) {
                 toast.success("Register successfully");
                 router.push('/login');
             }
         }).catch((error) => {
+            loader.hide()
+            toast.error("Register failed");
+            router.push('/register');
             console.log(error);
         })
     }
@@ -125,7 +131,7 @@ const register = (event) => {
                 </div>
                 <span class="confirmpassword-error error"></span>
 
-                <button class="button-submit" @click="register">Sign Up</button>
+                <button class="button-submit" @click.prevent="register">Sign Up</button>
                 <p class="p">Already have a account? <span class="span"><router-link
                             to="login">Login</router-link></span></p>
                 <div class="flex-row">

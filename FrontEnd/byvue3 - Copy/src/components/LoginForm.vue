@@ -1,25 +1,67 @@
 <script setup>
 import { axios } from '@/configs';
-import { onMounted } from 'vue';
-// import { useRouter } from 'vue-router';
+import { emailRegular, passwordValidationError } from '@/utils/rules';
+import { reactive } from 'vue';
+import { useLoading } from 'vue-loading-overlay';
+import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 
 const toast = useToast();
-// const router = useRouter();
+const router = useRouter();
+// const fullPage = ref(true);
+const $loading = useLoading({
+    //options...
 
-onMounted(() => {
-    axios.get('/api/user')
-    .then(res => {
-        console.log(res);
-        if (res.data.status === 'success') {
-            toast.success('Logged in successfully!');
-            // console.log()
-            // router.push('/');
-        }
-    }).catch(err => {
-        console.log(err);
-    })
 });
+
+const user = reactive({
+    email: '',
+    password: '',
+});
+
+function validateForm(user) {
+    let errors = {
+        email: emailRegular(user.email),
+        password: passwordValidationError(user.password),
+    };
+
+    return errors;
+}
+
+// Display errors
+function displayErrors(errors) {
+    document.querySelector('.password-error').innerHTML = errors.password;
+    document.querySelector('.email-error').innerHTML = errors.email;
+}
+
+const login = () => {
+    const errors = validateForm(user);
+    const hasErrors = Object.values(errors).some(error => error !== null);
+    // console.log(user)
+
+    if (hasErrors) {
+        displayErrors(errors);
+    } else {
+        const loader = $loading.show({
+            // optional paramaters
+        });
+        axios.post('/api/login', {
+            email: user.email,
+            password: user.password
+        }).then((response) => {
+            if (response.status === 200) {
+                // console.log(response);
+                localStorage.setItem('token', response.data.token);
+                loader.hide();
+                toast.success('Logged in successfully!');
+                router.push('/');
+            }
+        }).catch((error) => {
+            console.log(error);
+            loader.hide();
+        })
+    }
+}
 
 </script>
 
@@ -41,8 +83,9 @@ onMounted(() => {
                             </path>
                         </g>
                     </svg>
-                    <input type="text" class="input" placeholder="Enter your Email" />
+                    <input type="text" class="input" v-model="user.email" placeholder="Enter your Email" />
                 </div>
+                <span class="email-error error"></span>
 
                 <div class="flex-column">
                     <label>Password </label>
@@ -56,11 +99,13 @@ onMounted(() => {
                             d="m304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969 16-16 16s-16-7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0">
                         </path>
                     </svg>
-                    <input type="password" class="input" placeholder="Enter your Password" />
+                    <input type="password" class="input" v-model="user.password" placeholder="Enter your Password" />
                 </div>
+                <span class="password-error error"></span>
 
-                <button class="button-submit">Sign In</button>
-                <p class="p">Don't have a account? <span class="span"><router-link to="/register">Register</router-link></span></p>
+                <button @click.prevent="login" class="button-submit">Sign In</button>
+                <p class="p">Don't have a account? <span class="span"><router-link
+                            to="/register">Register</router-link></span></p>
                 <div class="flex-row">
                     <button class="btn google">
                         <svg version="1.1" width="20" id="Layer_1" xmlns="http://www.w3.org/2000/svg"

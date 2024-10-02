@@ -64,10 +64,6 @@ p {
 	line-height: 1.8;
 }
 
-img {
-	max-width: 100%;
-}
-
 input:focus,
 select:focus,
 button:focus,
@@ -79,6 +75,11 @@ a:hover,
 a:focus {
 	text-decoration: none;
 	outline: none;
+}
+
+img  {
+	width: 100%;
+	height: auto;
 }
 
 /*---------------------

@@ -68,12 +68,6 @@ table {
     border-spacing: 0;
 }
 
-img,
-video,
-svg {
-    display: block;
-    max-width: 100%;
-}
 
 @media (min-width: 64rem) {
     body {

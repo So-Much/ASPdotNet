@@ -1,21 +1,34 @@
 <script setup>
-import { ref } from 'vue';
+import {
+    ref,
+     watch
+} from 'vue';
 import {
     ClassicEditor, Bold, Essentials, Italic,
     Mention, Paragraph, Undo, Underline, Image, ImageInsert,
-    SimpleUploadAdapter, ImageResize,
-    // Base64UploadAdapter,
+    // SimpleUploadAdapter,
+    ImageResize,
+    Base64UploadAdapter,
     Alignment, Table, TableToolbar, TableColumnResize,
     Strikethrough, Subscript, Superscript, RemoveFormat,
     MediaEmbed, List, TodoList, Font, Heading,
     TableProperties,
     TableCellProperties,
     ImageStyle,
+    ImageToolbar,
+    ImageCaption,
+    LinkImage,
+    HorizontalLine,
+    Indent,
+    IndentBlock,
 } from 'ckeditor5';
 import 'ckeditor5/ckeditor5.css';
 
 import { injectMainJS, removeMainJS } from '@/utils/asynchronous';
 import { onMounted, onUnmounted } from 'vue';
+import { axios } from '@/configs';
+import { useRouter } from 'vue-router';
+import { useToast } from 'vue-toastification';
 
 onMounted(() => {
     injectMainJS();
@@ -24,68 +37,108 @@ onUnmounted(() => {
     removeMainJS();
 });
 
-const editorData = ref('');
+const router = useRouter();
+const toast = useToast();
 
-const APIPostRoute = process.env.VUE_APP_SERVER_URL + '/api/post/upload';
+const editorData = ref('');
+watch(editorData,() => {
+    document.getElementById('preview').innerHTML = editorData.value;
+})
+const createPost = e => {
+    e.preventDefault();
+    console.log(JSON.stringify(editorData.value));
+    axios.post('/api/post', {
+        content: editorData.value
+    }, {
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: 'Bearer ' + localStorage.getItem('token')
+        }
+    })
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => {
+            if (err.code === 404 || err.code === 401) {
+                console.log('Unauthorized');
+                toast.error('You are haven\'t been logged in yet!');
+                router.push('/login');
+            }
+        });
+}
+
+// const APIPostRoute = process.env.VUE_APP_SERVER_URL + '/api/post/metadata';
 </script>
 
 <template>
-    <div class="editor">
-        <Ckeditor v-model="editorData" :editor="ClassicEditor" :config="{
-            plugins: [
-                Bold, Essentials, Italic, Strikethrough, Subscript, Superscript,
-                Mention, Paragraph, Undo, Underline,
-                Image, ImageInsert,
-                Alignment, ImageStyle,
-                Table, TableToolbar, TableColumnResize, TableProperties, TableCellProperties,
-                RemoveFormat, MediaEmbed, List, TodoList,
-                Font, Heading,
-                // Base64UploadAdapter,
-                SimpleUploadAdapter, Image, ImageResize
-            ],
-            toolbar: [
-                'undo', 'redo', '|',
-                'heading', '|',
-                'fontFamily', 'fontSize', 'fontColor', 'fontBackgroundColor', '|',
-                'bold', 'italic', 'underline', 'strikethrough', '|',
-                'subscript', 'superscript', '|',
-                'removeFormat', '|',
-                'insertImage', 'mediaEmbed', '|',
-                'alignment',
-                'insertTable', 'tableProperties', 'tableCellProperties', '|',
-                'bulletedList', 'numberedList', 'todoList',
-            ],
-            table: {
-                contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
-            },
-            list: {
-                properties: {
-                    styles: true,
-                    startIndex: true,
-                }
-            },
-            simpleUpload: {
-                // The URL that the images are uploaded to.
-                uploadUrl: APIPostRoute,
+    <div class="createpost">
+        <div>
+            <Ckeditor v-model="editorData" :editor="ClassicEditor" :config="{
+                plugins: [
+                    Bold, Essentials, Italic, Strikethrough, Subscript, Superscript,
+                    Mention, Paragraph, Undo, Underline,
+                    Image, ImageInsert,
+                    Alignment, ImageStyle,
+                    Table, TableToolbar, TableColumnResize, TableProperties, TableCellProperties,
+                    RemoveFormat, MediaEmbed, List, TodoList,
+                    Font, Heading, HorizontalLine,
+                    Base64UploadAdapter, ImageToolbar, ImageCaption, ImageResize, LinkImage,
+                    Indent, IndentBlock
+                    // SimpleUploadAdapter,
 
-                // Enable the XMLHttpRequest.withCredentials property.
-                withCredentials: true,
-                // Headers sent along with the XMLHttpRequest to the upload server.
-                headers: {
-                    'X-CSRF-TOKEN': 'CSRF-Token',
-                    Authorization: 'Bearer <JSON Web Token>'
-                }
-            },
-            
-            licenseKey: '<YOUR_LICENSE_KEY>',
-            // Other configuration options...
-        }
-            " />
+                ],
+                toolbar: [
+                    'undo', 'redo', '|',
+                    'heading', '|',
+                    'fontFamily', 'fontSize', 'fontColor', 'fontBackgroundColor', '|',
+                    'bold', 'italic', 'underline', 'strikethrough', '|',
+                    'subscript', 'superscript', '|',
+                    'removeFormat', '|',
+                    'insertImage', 'mediaEmbed', '|',
+                    'alignment',
+                    'insertTable', 'tableProperties', 'tableCellProperties', '|',
+                    'horizontalLine', 'bulletedList', 'numberedList', 'todoList','|',
+                    'outdent', 'indent'
+                ],
+                table: {
+                    contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+                },
+                list: {
+                    properties: {
+                        styles: true,
+                        startIndex: true,
+                    }
+                },
+                image: {
+                    toolbar: [
+                        'imageStyle:block',
+                        'imageStyle:side',
+                        'imageStyle:inline',
+                        'imageStyle:wraptext',
+                        '|',
+                        'toggleImageCaption',
+                        'imageTextAlternative',
+                        '|',
+                        'linkImage'
+                    ]
+                },
+                licenseKey: '<YOUR_LICENSE_KEY>',
+                // Other configuration options...
+            }
+                " />
+        </div>
+        <button type="submit" @click="createPost">
+            Submit
+        </button>
+        <!-- <input type="file" name="" id="" accept="image/*"> -->
+    </div>
+    <h1>Form data is get it:</h1>
+    <div id="preview" class="ck-content">
     </div>
 </template>
 
 <style scoped>
-.editor {
+.createpost {
     margin: 20px;
     padding: 20px;
     border: 1px solid #ccc;

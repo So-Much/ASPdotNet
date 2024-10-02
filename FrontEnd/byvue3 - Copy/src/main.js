@@ -8,15 +8,19 @@ import Toast from 'vue-toastification';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { CkeditorPlugin } from '@ckeditor/ckeditor5-vue';
 import "vue-toastification/dist/index.css";
-
-const options = {
+import { LoadingPlugin } from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/css/index.css';
+const toastifyOptions = {
     // You can set your default vue-toastification options here
 };
 
-createApp(App)
+const app = createApp(App)
     .use(CkeditorPlugin)
     .component('font-awesome-icon', FontAwesomeIcon)
+    .use(LoadingPlugin)
     .use(store)
-    .use(Toast, options)
+    .use(Toast, toastifyOptions)
     .use(router)
-    .mount('#app')
+    .mount('#app');
+
+export default app;
