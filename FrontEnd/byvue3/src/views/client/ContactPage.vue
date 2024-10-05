@@ -1,6 +1,9 @@
 <script setup>
+import ContactSection from '@/components/ContactSection.vue';
+import HeaderSection from '@/components/HeaderSection.vue';
 import { injectMainJS, removeMainJS } from '@/utils/asynchronous';
 import { onMounted, onUnmounted } from 'vue';
+
 
 onMounted(() => {
     injectMainJS();
@@ -11,7 +14,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div>My Store Welcome</div>
+    <HeaderSection />
+    <ContactSection />
 </template>
 
 <style scoped>

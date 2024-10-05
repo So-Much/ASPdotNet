@@ -35,6 +35,16 @@ const routes = [
     component: () => import('../views/client/BlogsPot.vue')
   },
   {
+    path: '/contact',
+    name: 'contact',
+    component: () => import('../views/client/ContactPage.vue')
+  },
+  {
+    path: '/photographers',
+    name: 'photographers',
+    component: () => import('../views/client/PhotographersPage.vue')
+  },
+  {
     path: '/blogs/:blogId',
     name: 'blogdetail',
     component: () => import('../views/client/BlogDetail.vue')
@@ -44,6 +54,11 @@ const routes = [
     path: '/post/create',
     name: 'createpost',
     component: () => import('../views/client/CreatePost.vue'),
+  },
+  {
+    path: '/user/:userId',
+    name: 'userprofile',
+    component: () => import('../views/client/UserProfile.vue')
   },
   // dashboard routes
   {
@@ -60,6 +75,16 @@ const routes = [
     path: '/dashboard/blogs',
     name: 'admin_blogs',
     component: () => import('../views/dashboard/BlogsPage.vue'),
+  },
+  {
+    path: '/unauthorized',
+    name: 'unauthorized',
+    component: () => import('../views/exceptionpages/NotAuthorized.vue')
+  }
+  , {
+    path: '/:catchAll(.*)',
+    name: 'notfound',
+    component: () => import('../views/exceptionpages/PageNotFound.vue')
   }
 ]
 

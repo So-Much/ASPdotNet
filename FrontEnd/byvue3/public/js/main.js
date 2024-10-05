@@ -85,15 +85,16 @@ $(window).on('load', function() {
 		openedSymbol: '<i class="fa fa-angle-up"></i>'
 	});
 
-	$('.nav-switch-btn').on('click', function() {
-		if(localStorage.getItem("navMenu") == null) {
-			localStorage.setItem("navMenu", "show");
-			$('.main-menu').slideDown(400);
-		} else if(localStorage.getItem("navMenu") == "show") {
-			localStorage.removeItem("navMenu");
-			$('.main-menu').slideUp(400);
-		}
-	});
+	// $('.nav-switch-btn').on('click', function() {
+	// 	if(localStorage.getItem("navMenu") == null) {
+	// 		localStorage.setItem("navMenu", "show");
+	// 		$('.main-menu').slideDown(400);
+	// 	} else if(localStorage.getItem("navMenu") == "show") {
+	// 		localStorage.removeItem("navMenu");
+	// 		$('.main-menu').slideUp(400);
+	// 	}
+	// });
+	$('.main-menu').slideDown(400);
 
 	if(localStorage.getItem("navMenu") == "show") {
 		$('.main-menu').slideDown(400);

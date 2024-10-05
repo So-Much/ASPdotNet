@@ -18,7 +18,7 @@ namespace BackEnd.Controllers.Users
             _DbContext = DbContext;
             _Logger = logger;
         }
-
+        [Authorize(Roles = "ADMIN")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
@@ -46,6 +46,7 @@ namespace BackEnd.Controllers.Users
                 return BadRequest("An Error when get all Users");
             }
         }
+        [Authorize(Roles = "ADMIN")]
         [HttpGet("{UID}")]
         public async Task<ActionResult<User>> GetUser(string UID)
         {
@@ -148,6 +149,12 @@ namespace BackEnd.Controllers.Users
                 return StatusCode(500, "Error when delete user!");
             }
             return Ok("User is Deleted!");
+        }
+        [Authorize]
+        [HttpGet("isloggedin")]
+        public async Task<ActionResult<bool>> isLoggedIn()
+        {
+            return Ok(true);
         }
     }
 }

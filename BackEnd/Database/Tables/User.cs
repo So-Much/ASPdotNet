@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,9 +11,9 @@ namespace BackEnd.Database.Tables
         [Key]
         public int Id { get; set; }
         public string UID { get; set; } = "";
-        [Required]
         [StringLength(255)]
         public string Name { get; set; } = "";
+        [Required]
         [StringLength(255)]
         public string Email { get; set; } = "";
         [Required]

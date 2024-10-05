@@ -18,5 +18,9 @@
         {
             return DotNetEnv.Env.GetString("JWT_KEY", "JwtKey is not exists!!!");
         }
+        public string GetStaticPath()
+        {
+            return DotNetEnv.Env.GetString("STATIC_PATH", "StaticPath is not exists!!!");
+        }
     }
 }

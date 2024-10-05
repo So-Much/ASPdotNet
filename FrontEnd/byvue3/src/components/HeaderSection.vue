@@ -1,4 +1,11 @@
 <script setup>
+import { ref } from 'vue';
+
+
+const isLogged = ref(true);
+
+const userID = ref("892347923");
+const username = ref("John Doe");
 
 </script>
 
@@ -15,17 +22,19 @@
 		<ul class="main-menu">
 			<li><router-link to="/">Home</router-link></li>
 			<li><router-link to="/store">Store</router-link></li>
+			<li><router-link to="/blogs">Blogs</router-link></li>
 			<li>
-				<router-link to="/my-portfolio">Portfolio</router-link>
+				<!-- <router-link to="/my-portfolio">Portfolio</router-link> -->
+				<router-link to="/photographers">Photographers</router-link>
 				<!-- <ul class="sub-menu">
 					<li><a href="portfolio.html">Portfolio 1</a></li>
 					<li><a href="portfolio-1.html">Portfolio 2</a></li>
 					<li><a href="portfolio-2.html">Portfolio 3</a></li>
 				</ul> -->
 			</li>
-			<li><router-link to="/my-blogs">Blogs</router-link></li>
 			<!-- <li><a href="elements.html">Elements</a></li> -->
 			<li><router-link to="/contact">Contact</router-link></li>
+			<li><router-link v-if="isLogged" :to="'user/'+userID">{{ username }}</router-link></li>
 			<li class="search-mobile">
 				<button class="search-btn"><i class="fa fa-search"></i></button>
 			</li>

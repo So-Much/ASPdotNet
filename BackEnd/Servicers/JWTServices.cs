@@ -15,19 +15,33 @@ namespace BackEnd.Servicers
             var env = new EnviromentVariables();
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(env.GetJwtKey());
+            //new Claim[]
+            //    {
+            //        //new Claim(JwtRegisteredClaimNames.Sub, "ashdlahsldhaljksdkja"),
+            //        //new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            //        //new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
+            //        //key for find user after authorized jwt token
+
+
+            //        // Lấy UID từ token
+            //        //var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            //    }
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.UID),
+                    //email bonus - unique email of user
+                    new Claim(ClaimTypes.Email, user.Email)
+            };
+            foreach (var role in user.Roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    //key for find user after authorized jwt token
-                    new Claim(ClaimTypes.NameIdentifier, user.UID),
-                    //email bonus - unique email of user
-                    new Claim(ClaimTypes.Name, user.Email)
-
-                    // Lấy UID từ token
-                    //var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddHours(1),
+                Audience = "http://localhost:5144",
+                Issuer = "http://localhost:5144",
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
