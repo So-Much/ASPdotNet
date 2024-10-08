@@ -32,7 +32,7 @@ const routes = [
   {
     path: '/blogs',
     name: 'blogs',
-    component: () => import('../views/client/BlogsPot.vue')
+    component: () => import('../views/client/BlogsList.vue')
   },
   {
     path: '/contact',

@@ -8,7 +8,6 @@ import { computed, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
-
 onMounted(() => {
     injectMainJS();
 });

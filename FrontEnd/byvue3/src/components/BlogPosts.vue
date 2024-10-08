@@ -1,7 +1,9 @@
 <script setup>
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, computed, ref } from 'vue';
 import { injectMainJS, removeMainJS } from '@/utils/asynchronous';
 import PostItem from './minis/PostItem.vue';
+import PaginationComponent from './PaginationComponent.vue';
+import { useRoute } from 'vue-router';
 
 onMounted(() => {
     injectMainJS();
@@ -9,7 +11,9 @@ onMounted(() => {
 onUnmounted(() => {
     removeMainJS();
 });
-
+const route = useRoute();
+const currentPage = computed(() => parseInt(route.query.page || 1))
+const totalPages = ref(20);
 </script>
 
 <template>
@@ -177,13 +181,10 @@ onUnmounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-12">
-                                <ul class="page-numbers">
-                                    <li><a href="#">1</a></li>
-                                    <li class="active"><a href="#">2</a></li>
-                                    <li><a href="#">3</a></li>
-                                    <li><a href="#"><i class="fa fa-angle-double-right"></i></a></li>
-                                </ul>
+                            <div class="col-lg-12 pagination">
+                                <PaginationComponent
+                                :totalPages="totalPages"
+                                :currentPage="currentPage" />
                             </div>
                         </div>
                     </div>
@@ -267,4 +268,9 @@ onUnmounted(() => {
     </section>
 </template>
 
-<style scoped></style>
+<style scoped>
+.pagination {
+    margin-left: auto;
+    margin-right: auto;
+}
+</style>
