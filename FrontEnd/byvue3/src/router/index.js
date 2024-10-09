@@ -58,7 +58,53 @@ const routes = [
   {
     path: '/user/:userId',
     name: 'userprofile',
-    component: () => import('../views/client/UserProfile.vue')
+    component: () => import('../views/client/UserProfile.vue'),
+    children: [
+      {
+        path: 'blogs',
+        component: () => import('../views/client/UserProfile/UserBlogs.vue')
+      },
+      {
+        path: 'posts',
+        component: () => import('../views/client/UserProfile/UserPosts.vue')
+      },
+      {
+        path: 'recent-comments',
+        component: () => import('../views/client/UserProfile/UserRecentComments.vue')
+      },
+      {
+        path: 'followers',
+        component: () => import('../views/client/UserProfile/UserFollowers.vue')
+      },
+      {
+        path: 'followings',
+        component: () => import('../views/client/UserProfile/UserFollowing.vue')
+      },
+      {
+        path: 'categories',
+        component: () => import('../views/client/UserProfile/UserCategories.vue')
+      },
+      {
+        path: 'trendings',
+        component: () => import('../views/client/UserProfile/UserTrending.vue')
+      },
+      {
+        path: 'selling',
+        component: () => import('../views/client/UserProfile/UserSelling.vue')
+      },
+      {
+        path: 'purchase-history',
+        component: () => import('../views/client/UserProfile/UserPurchaseHistory.vue')
+      },
+      {
+        path: 'jobs',
+        component: () => import('../views/client/UserProfile/UserJobs.vue')
+      },
+      {
+        path: 'settings',
+        component: () => import('../views/client/UserProfile/UserSettings.vue')
+      }
+    ]
   },
   // dashboard routes
   {

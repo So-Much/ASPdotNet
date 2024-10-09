@@ -1,12 +1,18 @@
 <script setup>
-// import { useRoute } from 'vue-router';
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
 
-// const route = useRoute();
-// const userId = route.params.userId;
+const route = useRoute();
+const userId = route.params.userId;
+
+
+const username = ref("John Doe");
+const userRole = ref("Customer");
 </script>
 
 <template>
-  <div id="nav-bar"><input id="nav-toggle" type="checkbox" />
+  <div id="nav-bar">
+    <input id="nav-toggle" type="checkbox" />
     <div id="nav-header"><a id="nav-title" href="https://codepen.io" target="_blank">C<i
           class="fab fa-codepen"></i>DEPEN</a><label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
       <hr />
@@ -14,47 +20,64 @@
     <div id="nav-content">
       <!-- add route to it -->
       <div class="nav-button">
-        <router-link to="a">
+        <router-link class="nav_side_cus" :to="`/user/${userId}/blogs`">
           <i class="fas fa-solid fa-blog"></i><span>Blogs</span>
         </router-link>
       </div>
       <div class="nav-button">
-        <router-link to="">
-          <i class="fas fa-images"></i><span>Post</span>
+        <router-link class="nav_side_cus" :to="`/user/${userId}/posts`">
+          <i class="fas fa-images"></i><span>Posts</span>
         </router-link>
       </div>
 
       <div class="nav-button">
-        <router-link to="">
+        <router-link class="nav_side_cus" :to="`/user/${userId}/recent-comments`">
           <i class="fas fa-regular fa-comment"></i><span>Recent Comment</span>
         </router-link>
       </div>
 
       <hr />
+      <div class="nav-button">
+        <router-link class="nav_side_cus" :to="`/user/${userId}/followers`">
+          <i class="fas fa-solid fa-icons"></i><span>Followers</span>
+        </router-link>
+      </div>
+      <div class="nav-button">
+        <router-link class="nav_side_cus" :to="`/user/${userId}/followings`">
+          <i class="fas fa-solid fa-icons"></i><span>Followings</span>
+        </router-link>
+      </div>
+      <hr />
 
       <div class="nav-button">
-        <router-link to="">
+        <router-link class="nav_side_cus" :to="`/user/${userId}/categories`">
           <i class="fas fa-solid fa-icons"></i><span>Categories</span>
         </router-link>
       </div>
 
 
       <div class="nav-button">
-        <router-link to="">
+        <router-link class="nav_side_cus" :to="`/user/${userId}/trendings`">
           <i class="fas fa-chart-line"></i><span>Trending</span>
         </router-link>
       </div>
 
 
       <div class="nav-button">
-        <router-link to="">
+        <router-link class="nav_side_cus" :to="`/user/${userId}/selling`">
           <i class="fas fa-fire"></i><span>Selling</span>
+        </router-link>
+      </div>
+
+      <div class="nav-button">
+        <router-link class="nav_side_cus" :to="`/user/${userId}/purchase-history`">
+          <i class="fas fa-fire"></i><span>Purchase History</span>
         </router-link>
       </div>
 
 
       <div class="nav-button">
-        <router-link to="">
+        <router-link class="nav_side_cus" :to="`/user/${userId}/jobs`">
           <i class="fas fa-magic"></i><span>Jobs</span>
         </router-link>
       </div>
@@ -62,7 +85,7 @@
       <hr />
 
       <div class="nav-button">
-        <router-link to="">
+        <router-link class="nav_side_cus" :to="`/user/${userId}/settings`">
           <i class="fas fa-solid fa-gears"></i><span>Settings</span>
         </router-link>
       </div>
@@ -76,15 +99,16 @@
         </div>
         <div id="nav-footer-titlebox">
           <a @click.prevent="() => { }" id="nav-footer-title" href="/" target="_blank">
-            uahnbu
+            {{ username }}
           </a>
-          <span id="nav-footer-subtitle">Admin</span>
+          <span id="nav-footer-subtitle">{{ userRole }}</span>
         </div>
         <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
       </div>
       <div id="nav-footer-content">
-        <Lorem>ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua.</Lorem>
+        <textarea class="user_info">
+          Hello every body! I'm just a dev with vue js properties, i'm also the be dev with ndoe js using express or using ASP.NET framework woking with api core and manything i can do.
+        </textarea>
       </div>
     </div>
   </div>
@@ -105,6 +129,10 @@
   margin: 0;
   background: #9c88ff;
 } */
+
+.nav_side_cus {
+  width: 100%;
+}
 
 #nav-toggle:checked~#nav-header {
   width: calc(80px - 16px);
@@ -255,7 +283,7 @@ label[for=nav-toggle] {
 }
 
 #nav-content {
-  margin: -16px 0;
+  margin: 16px 0;
   padding: 16px 0;
   position: relative;
   flex: 1;
@@ -394,6 +422,27 @@ label[for=nav-toggle] {
 .nav-button:nth-of-type(8):hover~#nav-content-highlight {
   top: 394px;
 }
+.nav-button:nth-of-type(9):hover {
+  color: #18283b;
+}
+
+.nav-button:nth-of-type(9):hover~#nav-content-highlight {
+  top: 448px;
+}
+.nav-button:nth-of-type(10):hover {
+  color: #18283b;
+}
+
+.nav-button:nth-of-type(10):hover~#nav-content-highlight {
+  top: 502px;
+}
+.nav-button:nth-of-type(11):hover {
+  color: #18283b;
+}
+
+.nav-button:nth-of-type(11):hover~#nav-content-highlight {
+  top: 556px;
+}
 
 #nav-bar .fas {
   min-width: 3rem;
@@ -439,7 +488,7 @@ label[for=nav-toggle] {
 #nav-footer-titlebox {
   position: relative;
   margin-left: 16px;
-  width: 10px;
+  width: fit-content;
   display: flex;
   flex-direction: column;
   transition: opacity 1s;
@@ -480,12 +529,19 @@ label[for=nav-footer-toggle] {
 }
 
 #nav-footer-content::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 2px;
+  height: 2px;
 }
 
 #nav-footer-content::-webkit-scrollbar-thumb {
   border-radius: 99px;
-  background-color: #D62929;
+  background-color: #BCF2F6;
+}
+#nav-footer-content .user_info {
+  width: 100%;
+  background-color: transparent;
+  color: #8392a5;
+  border: none;
+  height: 300px;
 }
 </style>

@@ -20,14 +20,15 @@ onUnmounted(() => {
 <template>
     <HeaderSection />
     <UserSidebar />
-    <!-- <div class="view">
-        <h1>Hi Bro</h1>
-    </div> -->
-     <router-view></router-view>
+    <div class="user_profile_view">
+        <router-view></router-view>
+    </div>
 </template>
 
 <style scoped>
-.view {
-    margin-left: 256px;
+.user_profile_view {
+    margin-left: 276px;
+    width: 100%;
+    height: auto;
 }
 </style>

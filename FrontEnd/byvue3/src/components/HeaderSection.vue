@@ -1,9 +1,8 @@
 <script setup>
-import { axios } from '@/configs';
+// import { axios } from '@/configs';
 import { injectMainJS, removeMainJS } from '@/utils/asynchronous';
 import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
-import { useLoading } from 'vue-loading-overlay';
-
+// import { useLoading } from 'vue-loading-overlay';
 
 onMounted(() => {
 	injectMainJS();
@@ -12,38 +11,39 @@ onUnmounted(() => {
 	removeMainJS();
 });
 
-const $loading = useLoading();
+const isLogged = ref(true);
+const userID = ref("892347923");
+const username = ref("John Doe");
+
+// const $loading = useLoading();
 
 onBeforeMount(() => {
 	// check is logged in
-	if (localStorage.getItem("token")) {
-		const isloggedinLoading = $loading.show();
-		axios.get('/api/user/isloggedin',
-			{
-				headers: {
-					Authorization: "Bearer " + localStorage.getItem("token")
-				}
-			}
-		)
-		.then( res => {
-			isloggedinLoading.hide();
-			if (res.status === 200) {
-				isLogged.value = true;
-			}
-		})
-		.catch( err => {
-			isLogged.value = false;
-			isloggedinLoading.hide();
-			console.log(err);
-			localStorage.removeItem("token");
-		});
-	}
+	// if (localStorage.getItem("token")) {
+	// 	const isloggedinLoading = $loading.show();
+	// 	axios.get('/api/user/isloggedin',
+	// 		{
+	// 			headers: {
+	// 				Authorization: "Bearer " + localStorage.getItem("token")
+	// 			}
+	// 		}
+	// 	)
+	// 	.then( res => {
+	// 		isloggedinLoading.hide();
+	// 		if (res.status === 200) {
+	// 			isLogged.value = true;
+	// 		}
+	// 	})
+	// 	.catch( err => {
+	// 		isLogged.value = false;
+	// 		isloggedinLoading.hide();
+	// 		console.log(err);
+	// 		localStorage.removeItem("token");
+	// 	});
+	// }
 })
 
-const isLogged = ref(false);
 
-const userID = ref("892347923");
-const username = ref("John Doe");
 
 </script>
 
@@ -72,7 +72,7 @@ const username = ref("John Doe");
 			</li>
 			<!-- <li><a href="elements.html">Elements</a></li> -->
 			<li><router-link to="/contact">Contact</router-link></li>
-			<li><router-link v-if="isLogged" :to="'user/' + userID">{{ username }}</router-link></li>
+			<li><router-link v-if="isLogged" :to="'/user/' + userID">{{ username }}</router-link></li>
 			<li>
 				<router-link v-if="!isLogged" to="/login">Login</router-link>
 			</li>
