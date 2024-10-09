@@ -50,9 +50,9 @@ onBeforeMount(() => {
 <template>
 	<!-- Header section  -->
 	<header class="header-section">
-		<a href="index.html" class="site-logo">
+		<router-link to="/" class="site-logo">
 			<img src="../assets/logo.png" @error="e => e.target.src = ''" alt="logo" />
-		</a>
+		</router-link>
 		<div class="header-controls">
 			<button class="nav-switch-btn"><i class="fa fa-bars"></i></button>
 			<button class="search-btn"><i class="fa fa-search"></i></button>

@@ -39,12 +39,12 @@ const userRole = ref("Customer");
       <hr />
       <div class="nav-button">
         <router-link class="nav_side_cus" :to="`/user/${userId}/followers`">
-          <i class="fas fa-solid fa-icons"></i><span>Followers</span>
+          <i class="fas fa-solid fa-users"></i><span>Followers</span>
         </router-link>
       </div>
       <div class="nav-button">
         <router-link class="nav_side_cus" :to="`/user/${userId}/followings`">
-          <i class="fas fa-solid fa-icons"></i><span>Followings</span>
+          <i class="fas fa-solid fa-user-plus"></i><span>Followings</span>
         </router-link>
       </div>
       <hr />

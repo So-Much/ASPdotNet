@@ -61,6 +61,10 @@ const routes = [
     component: () => import('../views/client/UserProfile.vue'),
     children: [
       {
+        path: '',
+        component: () => import('../views/client/UserProfile/HomeProfile.vue')
+      },
+      {
         path: 'blogs',
         component: () => import('../views/client/UserProfile/UserBlogs.vue')
       },

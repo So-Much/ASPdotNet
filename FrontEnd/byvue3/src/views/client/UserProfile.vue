@@ -26,9 +26,11 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+
 .user_profile_view {
-    margin-left: 276px;
-    width: 100%;
+    margin-left: 296px;
+    margin-right: 200px;
+    
     height: auto;
 }
 </style>
