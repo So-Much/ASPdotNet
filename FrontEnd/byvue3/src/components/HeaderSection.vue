@@ -1,8 +1,46 @@
 <script setup>
-import { ref } from 'vue';
+import { axios } from '@/configs';
+import { injectMainJS, removeMainJS } from '@/utils/asynchronous';
+import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
+import { useLoading } from 'vue-loading-overlay';
 
 
-const isLogged = ref(true);
+onMounted(() => {
+	injectMainJS();
+});
+onUnmounted(() => {
+	removeMainJS();
+});
+
+const $loading = useLoading();
+
+onBeforeMount(() => {
+	// check is logged in
+	if (localStorage.getItem("token")) {
+		const isloggedinLoading = $loading.show();
+		axios.get('/api/user/isloggedin',
+			{
+				headers: {
+					Authorization: "Bearer " + localStorage.getItem("token")
+				}
+			}
+		)
+		.then( res => {
+			isloggedinLoading.hide();
+			if (res.status === 200) {
+				isLogged.value = true;
+			}
+		})
+		.catch( err => {
+			isLogged.value = false;
+			isloggedinLoading.hide();
+			console.log(err);
+			localStorage.removeItem("token");
+		});
+	}
+})
+
+const isLogged = ref(false);
 
 const userID = ref("892347923");
 const username = ref("John Doe");
@@ -13,7 +51,7 @@ const username = ref("John Doe");
 	<!-- Header section  -->
 	<header class="header-section">
 		<a href="index.html" class="site-logo">
-			<img src="../assets/logo.png" @error="e=>e.target.src=''" alt="logo" />
+			<img src="../assets/logo.png" @error="e => e.target.src = ''" alt="logo" />
 		</a>
 		<div class="header-controls">
 			<button class="nav-switch-btn"><i class="fa fa-bars"></i></button>
@@ -34,7 +72,13 @@ const username = ref("John Doe");
 			</li>
 			<!-- <li><a href="elements.html">Elements</a></li> -->
 			<li><router-link to="/contact">Contact</router-link></li>
-			<li><router-link v-if="isLogged" :to="'user/'+userID">{{ username }}</router-link></li>
+			<li><router-link v-if="isLogged" :to="'user/' + userID">{{ username }}</router-link></li>
+			<li>
+				<router-link v-if="!isLogged" to="/login">Login</router-link>
+			</li>
+			<li>
+				<router-link v-if="!isLogged" to="/register">Register</router-link>
+			</li>
 			<li class="search-mobile">
 				<button class="search-btn"><i class="fa fa-search"></i></button>
 			</li>
