@@ -198,7 +198,9 @@ svg {
         font-size: 1.5625rem;
     }
 }
-
+.contact {
+    min-height: 68vh;
+}
 /* variables */
 @media(min-width: 64rem) {
     :root {

@@ -33,12 +33,12 @@ const createBlog = () => {
         description="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae dolores, possimus
         pariatur animi temporibus nesciunt praesentium dolore sed nulla ipsum eveniet corporis quidem,  mollitia itaque minus soluta, voluptates neque explicabo tempora nisi culpa eius atque dignissimos. Molestias explicabo corporis voluptatem?"
         />
-        <h1>UserBlogs</h1>
     </div>
 </template>
 
 <style scoped>
 .userblog {
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
     gap: 1rem;
