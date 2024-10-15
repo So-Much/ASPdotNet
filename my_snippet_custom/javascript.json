@@ -1,0 +1,102 @@
+{
+	// Place your snippets for javascript here. Each snippet is defined under a snippet name and has a prefix, body and 
+	// description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the 
+	// same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+	// import
+	"import": {
+		"prefix": "ip",
+		"body": [
+			"import $1 from '$2';"
+		],
+		"description": "Use this snippet to import a module"
+	},
+	// export default
+	"export default": {
+		"prefix": "epd",
+		"body": [
+			"export default $1;"
+		],
+		"description": "Use this snippet to export a default module"
+	},
+	// export default object
+	"export default object": {
+		"prefix": "epdo",
+		"body": [
+			"export default {",
+			"\t$1",
+			"};"
+		],
+		"description": "Use this snippet to export a default object"
+	},
+	// export default function
+	"export default function": {
+		"prefix": "epdf",
+		"body": [
+			"export default function $1($2) {",
+			"\t$3",
+			"}"
+		],
+		"description": "Use this snippet to export a default function"
+	},
+	// export default connect() function of mongoose
+	"export default connect() function of mongoose": {
+		"prefix": "ep-mongoose-connect",
+		"body": [
+			"export default () => {",
+			"\tmongoose",
+			"\t.connect('mongodb://localhost:27017/$1', {",
+			"\t\tuseNewUrlParser: true,",
+			"\t\tuseUnifiedTopology: true,",
+			"\t})",
+			"\t.then(() => console.log('$2'))",
+			"\t.catch((err) => console.error('$3', err));",
+			"};"
+		],
+		"description": "Use this snippet to export a default connect() function of mongoose"
+	},
+	// mongoose model sample export using ES6 features
+	"mongoose sample model": {
+		"prefix": "mongoose-model-export",
+		"body": [
+			"import mongoose from 'mongoose';",
+			"",
+			"export default mongoose.model(",
+			"\t//Model name",
+			"\t'$1',",
+			"\tnew mongoose.Schema({",
+			"\t\t//Schema fields",
+			"\t\t$2",
+			"\t})",
+			");"
+		],
+		"description": "Use this snippet to export a mongoose model using ES6 features"
+	},
+	// simple express application
+	"simple express application": {
+		"prefix": "simple-express-app",
+		"body": [
+			"import express from 'express';",
+			"",
+			"const app = express();",
+			"",
+			"app.get('/', (req, res) => {",
+			"\tres.send('$1');",
+			"});",
+			"",
+			"app.listen(3000, () => {",
+			"\tconsole.log('Server is running on port 3000');",
+			"});"
+		],
+		"description": "Use this snippet to create a simple express application"
+	},
+}
