@@ -17,12 +17,6 @@ namespace BackEnd.Servicers
             var key = Encoding.ASCII.GetBytes(env.GetJwtKey());
             //new Claim[]
             //    {
-            //        //new Claim(JwtRegisteredClaimNames.Sub, "ashdlahsldhaljksdkja"),
-            //        //new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            //        //new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
-            //        //key for find user after authorized jwt token
-
-
             //        // Lấy UID từ token
             //        //var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             //    }

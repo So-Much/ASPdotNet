@@ -127,12 +127,14 @@ const createPost = e => {
             }
                 " />
         </div>
+        <input type="radio" name="publish" id=""> Publish
+        <input type="radio" name="publish" id=""> Private
         <button type="submit" @click="createPost">
             Submit
         </button>
         <!-- <input type="file" name="" id="" accept="image/*"> -->
     </div>
-    <h1>Form data is get it:</h1>
+    <h1 style="padding: 40px;">Review:</h1>
     <div id="preview" class="ck-content">
     </div>
 </template>
