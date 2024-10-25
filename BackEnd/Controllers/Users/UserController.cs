@@ -1,9 +1,11 @@
 ﻿using BackEnd.Database;
 using BackEnd.Database.Tables;
 using BackEnd.DTO;
+using BackEnd.utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BackEnd.Controllers.Users
 {
@@ -152,9 +154,38 @@ namespace BackEnd.Controllers.Users
         }
         [Authorize]
         [HttpGet("isloggedin")]
-        public async Task<ActionResult<bool>> isLoggedIn()
+        public async Task<ActionResult<bool>> IsLoggedIn()
         {
             return Ok(true);
+        }
+        [Authorize]
+        [HttpPost("uploadavatar")]
+        [Consumes("multipart/form-data")]
+
+        public async Task<ActionResult<string>> UploadAvatar([FromForm] IFormCollection form)
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var user = await _DbContext.Users
+                    .FirstOrDefaultAsync(u => u.UID == userId);
+                //get image from form data
+                var image = form.Files["avatar"];
+                if (image == null)
+                {
+                    return BadRequest("Avatar is required");
+                }
+                var filename = image.FileName.Split('.')[0];
+                var fileExtension = image.FileName.Split('.')[1];
+                var filepath = $"avatar/{user.Name}_{filename}_{Guid.NewGuid().ToString()}.{fileExtension}";
+                var avatar = await ImageProcessing.StoreImage(image, filepath);
+                return Ok(avatar);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString());
+                return StatusCode(500, "Error when upload avatar!");
+            }
         }
     }
 }
