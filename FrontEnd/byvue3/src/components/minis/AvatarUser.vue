@@ -70,7 +70,7 @@ const changeStatus = (e) => {
                 <path d="M10,10.5a4.487,4.487,0,0,0-4.471,4.21L5.5,15.5h9l-.029-.79A4.487,4.487,0,0,0,10,10.5Z"
                     stroke="currentColor" />
             </svg>
-            <img class="avatar__img" :src="console.log("avatar.value in src: ",avatar.value)" ref="avatarPreview" :alt="name" :title="name" v-if="avatar.value">
+            <img class="avatar__img" :src="avatar.value" ref="avatarPreview" :alt="name" :title="name" v-if="avatar.value">
             <img class="avatar__img" :src="defaultAvatar().value" ref="avatarPreview" :alt="name" :title="name" v-else>
 
         </figure>
