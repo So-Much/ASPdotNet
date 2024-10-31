@@ -5,7 +5,11 @@ import AvatarUser from '@/components/minis/AvatarUser.vue';
 </script>
 
 <template>
-    <AvatarUser />
+    <div class="container">
+        <div class="content">
+            <AvatarUser />
+        </div>
+    </div>
 </template>
 
 <style scoped>

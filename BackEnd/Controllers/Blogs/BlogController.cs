@@ -1,4 +1,5 @@
 ﻿using BackEnd.Database.Tables;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackEnd.Controllers.Blogs
@@ -13,8 +14,10 @@ namespace BackEnd.Controllers.Blogs
             return Ok("Get all Blogs");
         }
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Blog>> CreateBlog(Blog blog)
         {
+            //Check who is create this blog by user
 
             return Ok("Create a Blog");
         }
