@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <Folder Include="uploads\avatar\" />
+    <Folder Include="uploads\post\" />
   </ItemGroup>
 
 </Project>

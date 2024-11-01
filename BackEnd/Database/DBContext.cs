@@ -4,7 +4,9 @@ namespace BackEnd.Database
 {
     public class DBContext : DbContext
     {
-        public DBContext(DbContextOptions<DBContext> options) : base(options) { }
+        public DBContext(DbContextOptions<DBContext> options) : base(options) {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        }
         
         //Add tables here
         public DbSet<Tables.User> Users { get; set; }
