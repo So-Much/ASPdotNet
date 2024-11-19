@@ -1,11 +1,11 @@
 ﻿using BackEnd.Database;
 using BackEnd.Database.Tables;
+using BackEnd.DTO;
 using BackEnd.utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace BackEnd.Controllers.Blogs
 {
@@ -29,14 +29,55 @@ namespace BackEnd.Controllers.Blogs
             _DbContext = dbContext;
         }
         [HttpGet]
-        public IActionResult GetBlogs()
+        [Authorize(Roles = "ADMIN")]
+        public async Task<ActionResult<IEnumerable<BlogDTO>>> GetBlogs()
         {
-            return Ok("Get all Blogs");
+            try
+            {
+                var blogs = _DbContext.Blogs
+                    .Include(b => b.Author)
+                    .Include(b => b.Posts)
+                    .Select(b => new BlogDTO(b))
+                    .ToListAsync();
+                return Ok(blogs);
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError(ex, "Error Get All Blogs");
+                return BadRequest("Error Get All Blogs");
+            }
+        }
+        [HttpGet("allblogsbyuser")]
+        [Authorize]
+        public async Task<ActionResult<BlogDTO>> GetAllBlogsByUser()
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var user = await _DbContext.Users
+                    .FirstOrDefaultAsync(u => u.UID == userId);
+                var blogs = _DbContext.Blogs
+                    .Include(b => b.Author)
+                    .Include(b => b.Posts)
+                    .Where(b => b.Author == user)
+                    .Select(b => new BlogDTO(b))
+                    .ToListAsync();
+                if (blogs == null)
+                {
+                    return NotFound("No Blog Found");
+                }
+                return Ok(blogs);
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError(ex, "Error Get All Blogs By User");
+                return BadRequest("Error Get All Blogs By User");
+            }
         }
         [HttpPost]
         [Authorize]
         [Consumes("multipart/form-data")]
-        public async Task<ActionResult<Blog>> CreateBlog([FromForm] IFormCollection form)
+        public async Task<ActionResult<BlogDTO>> CreateBlog([FromForm] IFormCollection form)
         {
             //Check who is create this blog by user
             try
@@ -72,12 +113,33 @@ namespace BackEnd.Controllers.Blogs
                 };
                 _DbContext.Blogs.Add(blog);
                 await _DbContext.SaveChangesAsync();
-                return Ok(blog);
-            } catch (Exception ex)
+                BlogDTO blogDTO = new BlogDTO(blog);
+                return Ok(blogDTO);
+            }
+            catch (Exception ex)
             {
                 _Logger.LogError(ex, "Error Create a Blog");
                 return BadRequest("Error Create a Blog");
-             }
+            }
+        }
+        [HttpGet("getpublishedblogs")]
+        public async Task<ActionResult<IEnumerable<BlogDTO>>> GetPublishedBlogs()
+        {
+            try
+            {
+                var blogs = _DbContext.Blogs
+                    .Include(b => b.Author)
+                    .Include(b => b.Posts)
+                    .Where(b => b.IsPublished)
+                    .Select(b => new BlogDTO(b))
+                    .ToListAsync();
+                return Ok(blogs);
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError(ex, "Error Get Published Blogs");
+                return BadRequest("Error Get Published Blogs");
+            }
         }
     }
 }

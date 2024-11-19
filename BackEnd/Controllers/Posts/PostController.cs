@@ -124,7 +124,7 @@ namespace BackEnd.Controllers.Posts
                 return BadRequest("Error Create Post");
             }
         }
-        
+
         [HttpPost("img")]
         [Authorize]
         [Consumes("multipart/form-data")]
@@ -157,6 +157,41 @@ namespace BackEnd.Controllers.Posts
             {
                 _Logger.LogError(ex, "Error Upload Post Image");
                 return BadRequest("Error Upload Post Image");
+            }
+        }
+        [Authorize]
+        [HttpGet("allpostsbyuser")]
+        public async Task<ActionResult<IEnumerable<Post>>> GetAllPostsByUser()
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var posts = await _DbContext.Blogs
+                    .Where(b => b.Author.UID == userId)
+                    .SelectMany(b => b.Posts)
+                    .ToListAsync();
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError(ex, "Error Get Posts By User");
+                return BadRequest("Error Get Posts By User");
+            }
+        }
+        [HttpGet("getpublishedposts")]
+        public async Task<ActionResult<IEnumerable<Post>>> GetPublishedPosts()
+        {
+            try
+            {
+                var posts = await _DbContext.Posts
+                    .Where(p => p.IsPublished)
+                    .ToListAsync();
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError(ex, "Error Get Published Posts");
+                return BadRequest("Error Get Published Posts");
             }
         }
     }
