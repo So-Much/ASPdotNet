@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace BackEnd.Database.Tables
 {
@@ -13,6 +14,7 @@ namespace BackEnd.Database.Tables
         public DateTime CreateAt { get; set; }
         public bool IsPublished { get; set; }
         public int? FK_UserId { get; set; }
+        [JsonIgnore]
         public User? Author { get; set; } = null!;
         public ICollection<Post> Posts { get; set; } = new List<Post>();
     }
