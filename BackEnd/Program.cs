@@ -20,7 +20,7 @@ builder.Services.ConfigureDatabase(env.GetConnectionString());
 //JWT
 builder.Services.ConfigureJwt(env.GetJwtKey());
 
-// Add services to the container.
+// Add CORS services to the container.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost",
@@ -66,8 +66,10 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
+// accept lowercase urls
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
+// Serialization of enums as strings in JSON responses
 builder.Services.AddControllers().AddJsonOptions(option =>
 {
     option.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
@@ -85,8 +87,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapControllers();
-
 app.UseCors("AllowLocalhost");
+// Serve static files from the /uploads directory
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
