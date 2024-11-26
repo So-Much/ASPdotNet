@@ -57,7 +57,7 @@ const routes = [
         component: () => import('../views/client/CreatePost.vue'),
     },
     {
-        path: '/user/:userId',
+        path: '/user/:username',
         name: 'userprofile',
         component: () => import('../views/client/UserProfile.vue'),
         children: [

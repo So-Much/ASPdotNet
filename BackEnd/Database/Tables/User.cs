@@ -10,6 +10,8 @@ namespace BackEnd.Database.Tables
     {
         [Key]
         public int Id { get; set; }
+        [StringLength(255)]
+        public string Avatar { get; set; } = "";
         public string UID { get; set; } = "";
         [StringLength(255)]
         public string Name { get; set; } = "";

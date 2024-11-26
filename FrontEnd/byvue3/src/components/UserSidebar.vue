@@ -1,10 +1,11 @@
 <script setup>
 import { ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
+const router = useRouter();
 const userId = route.params.userId;
-
+const avatar = ref("")
 
 const username = ref("John Doe");
 const userRole = ref("Customer");
@@ -95,12 +96,14 @@ const userRole = ref("Customer");
     <div id="nav-footer">
       <div id="nav-footer-heading">
         <div id="nav-footer-avatar">
-          <img src="https://gravatar.com/avatar/4474ca42d303761c2901fa819c4f2547" />
+          <img :src="avatar ? avatar : '/png-transparent-default-avatar-thumbnail.png'" @error="e => e.target.src = '/png-transparent-default-avatar-thumbnail.png'" />
         </div>
         <div id="nav-footer-titlebox">
-          <a @click.prevent="() => { }" id="nav-footer-title" href="/" target="_blank">
+          <router-link @click.prevent="() => {
+            router.push(`/user/${userId}`);
+           }" id="nav-footer-title" href="/" target="_blank">
             {{ username }}
-          </a>
+          </router-link>
           <span id="nav-footer-subtitle">{{ userRole }}</span>
         </div>
         <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
@@ -129,6 +132,10 @@ const userRole = ref("Customer");
   margin: 0;
   background: #9c88ff;
 } */
+
+.nav-footer-titlebox {
+  cursor: pointer;
+}
 
 .nav_side_cus {
   width: 100%;

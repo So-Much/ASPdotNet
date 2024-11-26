@@ -179,6 +179,8 @@ namespace BackEnd.Controllers.Users
                 var fileExtension = image.FileName.Split('.')[1];
                 var filepath = $"avatar/{user.Name}_{filename}_{Guid.NewGuid().ToString()}.{fileExtension}";
                 var avatar = await ImageProcessing.StoreImage(image, filepath);
+                user.Avatar = avatar;
+                await _DbContext.SaveChangesAsync();
                 return Ok(avatar);
             }
             catch (Exception ex)
@@ -186,6 +188,41 @@ namespace BackEnd.Controllers.Users
                 Console.WriteLine(ex.Message.ToString());
                 return StatusCode(500, "Error when upload avatar!");
             }
+        }
+        [Authorize]
+        [HttpGet("information")]
+        public async Task<ActionResult<UserDTO>> getCurrentUser()
+        {
+            try
+            {
+                //find user by uid and return user DTO to client
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var user = await _DbContext.Users
+                    .Include(u => u.Contact)
+                    .FirstOrDefaultAsync(u => u.UID == userId);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                var userDTO = new UserDTO
+                {
+                    UID = user.UID,
+                    Avatar = user.Avatar,
+                    Name = user.Name,
+                    Email = user.Email,
+                    Password = user.Password,
+                    Bio = user.Bio,
+                    Roles = user.Roles.Select(r => r.ToString()).ToArray(),
+                    Contact = user.Contact
+                };
+                return Ok(userDTO);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString());
+                return null;
+            }
+
         }
     }
 }

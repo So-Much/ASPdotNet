@@ -25,6 +25,9 @@ namespace BackEnd.Controllers.Auth
             //    email: ''
             //    password: ''
             //}
+            _Logger.LogInformation("user from register request is: "+ user);
+            _Logger.LogInformation("-----------------------------------------------------");
+
             try
             {
                 user.UID = GenerateSystem.GenerateUserId();
@@ -42,6 +45,7 @@ namespace BackEnd.Controllers.Auth
             }
             catch (Exception e)
             {
+                _Logger.LogInformation("user from register request is: "+ user);
                 _Logger.LogError(e.Message, "An Error when register User");
                 return BadRequest("An Error when register User");
             }

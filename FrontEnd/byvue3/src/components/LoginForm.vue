@@ -55,9 +55,12 @@ const login = () => {
                 loader.hide();
                 toast.success('Logged in successfully!');
                 router.push('/');
+            } else {
+                toast.error('Invalid email or password');
             }
-        }).catch((error) => {
-            console.log(error);
+        }).catch(() => {
+            // console.log(error);
+            toast.error('Email or password is incorrect!');
             loader.hide();
         })
     }
@@ -134,6 +137,11 @@ const login = () => {
 </template>
 
 <style scoped>
+
+.error {
+    color: red;
+}
+
 .login-form {
     max-width: 80%;
     margin-left: auto;

@@ -1,7 +1,8 @@
 <script setup>
 // import { axios } from '@/configs';
+import { axios } from '@/configs';
 import { injectMainJS, removeMainJS } from '@/utils/asynchronous';
-import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
+import { onBeforeMount, onMounted, onUnmounted, reactive, ref } from 'vue';
 // import { useLoading } from 'vue-loading-overlay';
 
 onMounted(() => {
@@ -11,37 +12,57 @@ onUnmounted(() => {
 	removeMainJS();
 });
 
-const isLogged = ref(true);
-const userID = ref("892347923");
-const username = ref("John Doe");
+const isLogged = ref(false);
+
+const user = reactive({
+
+});
+
+onBeforeMount(() => {
+	if (localStorage.getItem('token')) {
+		axios.get('/api/user/isloggedin',
+			{
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('token')
+				}
+			}
+		)
+			.then(
+				res => {
+					if (res.status === 200) {
+						isLogged.value = true;
+						axios.get('/api/user/information',
+							{
+								headers: {
+									Authorization: 'Bearer ' + localStorage.getItem('token')
+								}
+							}
+						)
+							.then(
+								res => {
+									if (res.status === 200) {
+										user.username = res.data.name;
+										user.userID = res.data.uid;
+									}
+								}
+							)
+					}
+				}
+			)
+			.catch(
+				err => {
+					isLogged.value = false;
+					console.log(err);
+					localStorage.removeItem('token');
+				}
+			);
+	} else {
+		isLogged.value = false;
+	}
+});
 
 // const $loading = useLoading();
 
-onBeforeMount(() => {
-	// check is logged in
-	// if (localStorage.getItem("token")) {
-	// 	const isloggedinLoading = $loading.show();
-	// 	axios.get('/api/user/isloggedin',
-	// 		{
-	// 			headers: {
-	// 				Authorization: "Bearer " + localStorage.getItem("token")
-	// 			}
-	// 		}
-	// 	)
-	// 	.then( res => {
-	// 		isloggedinLoading.hide();
-	// 		if (res.status === 200) {
-	// 			isLogged.value = true;
-	// 		}
-	// 	})
-	// 	.catch( err => {
-	// 		isLogged.value = false;
-	// 		isloggedinLoading.hide();
-	// 		console.log(err);
-	// 		localStorage.removeItem("token");
-	// 	});
-	// }
-})
 
 
 
@@ -72,7 +93,8 @@ onBeforeMount(() => {
 			</li>
 			<!-- <li><a href="elements.html">Elements</a></li> -->
 			<li><router-link to="/contact">Contact</router-link></li>
-			<li><router-link v-if="isLogged" :to="'/user/' + userID">{{ username }}</router-link></li>
+			<li><router-link v-if="isLogged" :to="'/user/' + user.username">{{`Welcome, ${user.username} ` }}</router-link></li>
+			<li><router-link v-if="isLogged" to="/login">Logout</router-link></li>
 			<li>
 				<router-link v-if="!isLogged" to="/login">Login</router-link>
 			</li>

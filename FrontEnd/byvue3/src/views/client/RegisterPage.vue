@@ -5,9 +5,11 @@ import { onBeforeMount, onMounted, onUnmounted } from 'vue';
 import { axios } from '@/configs';
 import { useRouter } from 'vue-router';
 import { useLoading } from 'vue-loading-overlay';
+import { useToast } from 'vue-toastification';
 
 const $loading = useLoading();
 const router = useRouter();
+const toast = useToast();
 
 onBeforeMount(() => {
     if (localStorage.getItem('token')) {
@@ -23,11 +25,13 @@ onBeforeMount(() => {
                 loader.hide();
                 if (res.status === 200) {
                     router.push('/');
+                    toast.warning('You has logged in already!')
                 }
             })
-            .catch(err => {
+            .catch( () => {
                 loader.hide();
-                console.log(err);
+                toast.error("token is invalid!")
+                // console.log(err);
                 localStorage.removeItem('token');
             });
     }
