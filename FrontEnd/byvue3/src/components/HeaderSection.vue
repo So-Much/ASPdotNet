@@ -1,9 +1,13 @@
 <script setup>
 // import { axios } from '@/configs';
 import { axios } from '@/configs';
+import router from '@/router';
 import { injectMainJS, removeMainJS } from '@/utils/asynchronous';
 import { onBeforeMount, onMounted, onUnmounted, reactive, ref } from 'vue';
+import { useToast } from 'vue-toastification';
 // import { useLoading } from 'vue-loading-overlay';
+
+const toast = useToast();
 
 onMounted(() => {
 	injectMainJS();
@@ -62,7 +66,12 @@ onBeforeMount(() => {
 });
 
 // const $loading = useLoading();
-
+const handleLogout = () => {
+	toast.success('Logout successfully');
+	localStorage.removeItem('token');
+	isLogged.value = false;
+	router.push('/');
+}
 
 
 
@@ -93,8 +102,8 @@ onBeforeMount(() => {
 			</li>
 			<!-- <li><a href="elements.html">Elements</a></li> -->
 			<li><router-link to="/contact">Contact</router-link></li>
-			<li><router-link v-if="isLogged" :to="'/user/' + user.username">{{`Welcome, ${user.username} ` }}</router-link></li>
-			<li><router-link v-if="isLogged" to="/login">Logout</router-link></li>
+			<li><router-link v-if="isLogged" :to="`/user/${user.username}`">{{`Welcome, ${user.username} ` }}</router-link></li>
+			<li><router-link v-if="isLogged" to="/login" @click="handleLogout">Logout</router-link></li>
 			<li>
 				<router-link v-if="!isLogged" to="/login">Login</router-link>
 			</li>

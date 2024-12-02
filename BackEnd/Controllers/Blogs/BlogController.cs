@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Text.Json.Serialization;
 
 namespace BackEnd.Controllers.Blogs
 {
@@ -30,14 +31,13 @@ namespace BackEnd.Controllers.Blogs
         }
         [HttpGet]
         [Authorize(Roles = "ADMIN")]
-        public async Task<ActionResult<IEnumerable<BlogDTO>>> GetBlogs()
+        public async Task<ActionResult<IEnumerable<Blog>>> GetBlogs()
         {
             try
             {
-                var blogs = _DbContext.Blogs
+                var blogs = await _DbContext.Blogs
                     .Include(b => b.Author)
                     .Include(b => b.Posts)
-                    .Select(b => new BlogDTO(b))
                     .ToListAsync();
                 return Ok(blogs);
             }
@@ -47,20 +47,52 @@ namespace BackEnd.Controllers.Blogs
                 return BadRequest("Error Get All Blogs");
             }
         }
-        [HttpGet("allblogsbyuser")]
+        [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<BlogDTO>> GetAllBlogsByUser()
+        public async Task<ActionResult<Blog>> GetABlogById(int id)
         {
             try
             {
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var user = await _DbContext.Users
                     .FirstOrDefaultAsync(u => u.UID == userId);
-                var blogs = _DbContext.Blogs
+                if (user == null)
+                {
+                    return NotFound("user not found");
+                }
+
+                var blog = await _DbContext.Blogs
                     .Include(b => b.Author)
                     .Include(b => b.Posts)
-                    .Where(b => b.Author == user)
-                    .Select(b => new BlogDTO(b))
+                    .FirstOrDefaultAsync(b => b.Id == id && b.FK_UserId == user.Id);
+                if(blog == null)
+                {
+                    return NotFound("Blog not found");
+                }
+                return Ok(blog);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error!");
+            }
+        }
+        [HttpGet("allblogsbyuser")]
+        [Authorize]
+        public async Task<ActionResult<Blog>> GetAllBlogsByUser()
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var user = await _DbContext.Users
+                    .FirstOrDefaultAsync(u => u.UID == userId);
+                if (user == null)
+                {
+                    return NotFound("No User Found");
+                }
+                var blogs = await _DbContext.Blogs
+                    .Include(b => b.Author)
+                    .Include(b => b.Posts)
+                    .Where(b => b.Author!.UID.Equals(user!.UID))
                     .ToListAsync();
                 if (blogs == null)
                 {
@@ -123,15 +155,14 @@ namespace BackEnd.Controllers.Blogs
             }
         }
         [HttpGet("getpublishedblogs")]
-        public async Task<ActionResult<IEnumerable<BlogDTO>>> GetPublishedBlogs()
+        public async Task<ActionResult<IEnumerable<Blog>>> GetPublishedBlogs()
         {
             try
             {
-                var blogs = _DbContext.Blogs
+                var blogs = await _DbContext.Blogs
                     .Include(b => b.Author)
                     .Include(b => b.Posts)
                     .Where(b => b.IsPublished)
-                    .Select(b => new BlogDTO(b))
                     .ToListAsync();
                 return Ok(blogs);
             }
@@ -139,6 +170,118 @@ namespace BackEnd.Controllers.Blogs
             {
                 _Logger.LogError(ex, "Error Get Published Blogs");
                 return BadRequest("Error Get Published Blogs");
+            }
+        }
+        [HttpPut("img/{id}")]
+        [Authorize]
+        public async Task<ActionResult<String>> updateBlogImg(int id, [FromForm] IFormCollection form)
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var user = await _DbContext.Users
+                    .FirstOrDefaultAsync(u => u.UID == userId);
+
+                var blog = await _DbContext.Blogs.FindAsync(id);
+                if (blog == null)
+                {
+                    return NotFound("Blog does not exist!");
+                }
+
+                var image = form.Files["image"] ?? null;
+                var filename = image.FileName.Split('.')[0];
+                var fileExtension = image.FileName.Split('.')[1];
+                var filepath = $"blog/{user.Name}_{filename}_{Guid.NewGuid().ToString()}.{fileExtension}";
+                string blogimg = await ImageProcessing.StoreImage(image, filepath);
+
+                blog.Image = blogimg;
+                await _DbContext.SaveChangesAsync();
+                return Ok(blogimg);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<ActionResult<Blog>> updateBlog(int id, [FromBody] Dictionary<string, object> updates)
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var user = await _DbContext.Users
+                    .FirstOrDefaultAsync(u => u.UID == userId);
+                if (user == null)
+                {
+                    return NotFound("No User Found");
+                }
+                var blog = await _DbContext.Blogs.FindAsync(id);
+                if (blog == null)
+                {
+                    return BadRequest("Blog is deleted or something went wrong");
+                }
+                // Cập nhật chỉ các trường không null
+                foreach (var update in updates)
+                {
+                    switch (update.Key.ToLower())
+                    {
+                        case "title":
+                            blog.Title = update.Value?.ToString();
+                            break;
+                        case "description":
+                            blog.Description = update.Value?.ToString();
+                            break;
+                        case "ispublished":
+                            if (bool.TryParse(update.Value?.ToString(), out var isPublished))
+                            {
+                                blog.IsPublished = isPublished;
+                            }
+                            break;
+                        default:
+                            // Nếu key không hợp lệ, bỏ qua
+                            break;
+                    }
+                }
+
+                // Lưu thay đổi vào database
+                _DbContext.Blogs.Update(blog);
+                await _DbContext.SaveChangesAsync();
+
+                return Ok(blog);
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogError(ex, "Error updating blog with ID {id}", id);
+                return StatusCode(500, "Internal server error");
+            }
+        }
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<ActionResult<Blog>> deleteBlog(int id)
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var user = await _DbContext.Users
+                    .FirstOrDefaultAsync(u => u.UID == userId);
+                if (user == null)
+                {
+                    return BadRequest("User is not found!");
+                }
+                var blog = await _DbContext.Blogs
+                    .FirstOrDefaultAsync(b => b.Id == id && b.FK_UserId == user.Id);
+                if (blog == null)
+                {
+                    return BadRequest("User is Unthorized or Blog doesn't exist!");
+                }
+                _DbContext.Blogs.Remove(blog);
+                await _DbContext.SaveChangesAsync();
+                return Ok(blog);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error");
             }
         }
     }

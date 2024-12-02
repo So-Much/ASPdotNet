@@ -1,5 +1,43 @@
+
+<script setup>
+import { computed } from 'vue';
+import { toRefs, defineProps } from 'vue';
+
+const props = defineProps({
+  title: String,
+  content: String,
+  blogId: {
+    type: String,
+    required: true,
+  },
+  images: {
+    type: Array,
+    default: () => [],
+  },
+  numlikes: Number,
+  numdislike: Number,
+  ispublished: Boolean,
+  hashtags: Array,
+  createdat: String,
+  carouselId: {
+    type: String,
+    required: true,
+  },
+});
+
+const { createdat } = toRefs(props);
+
+const formattedDate = computed(() => {
+  return new Date(createdat.value).toLocaleDateString();
+});
+
+const onCardClick = () => {
+  console.log(props.blogId, "onCard")
+}
+
+</script>
 <template>
-  <div class="card my-3">
+  <div class="card card_custom my-3" @click.prevent="onCardClick(carouselId)">
     <!-- Carousel with unique ID, autoplay, indicators, and captions -->
     <div
         v-if="images && images.length"
@@ -47,7 +85,7 @@
 
     <div class="card-body">
       <h5 class="card-title">{{ title }}</h5>
-      <p class="card-text">{{ content }}</p>
+      <!-- <p class="card-text">{{ content }}</p> -->
 
       <div class="d-flex justify-content-between align-items-center">
         <div>
@@ -56,7 +94,7 @@
         </div>
         <div>
           <span v-if="ispublished" class="badge bg-success">Published</span>
-          <span v-else class="badge bg-secondary">Unpublished</span>
+          <span v-else class="badge bg-secondary">Privated</span>
         </div>
       </div>
 
@@ -70,39 +108,13 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  name: "PostCard",
-  props: {
-    title: String,
-    content: String,
-    images: {
-      type: Array,
-      default: () => [],
-    },
-    numlikes: Number,
-    numdislike: Number,
-    ispublished: Boolean,
-    hashtags: Array,
-    createdat: String,
-    carouselId: {
-      type: String,
-      required: true,
-    },
-  },
-  computed: {
-    formattedDate() {
-      return new Date(this.createdat).toLocaleDateString();
-    },
-  },
-};
-</script>
-
 <style scoped>
 .carousel-item img {
   max-height: 400px;
   object-fit: cover;
+}
+.card_custom {
+  cursor: pointer;
 }
 
 @import '@/assets/vendor/css/core.css';

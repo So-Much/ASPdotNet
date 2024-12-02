@@ -36,6 +36,11 @@ const routes = [
         component: () => import('../views/client/BlogsList.vue')
     },
     {
+        path: '/blog/create',
+        name: 'createblog',
+        component: () => import('../views/client/CreateBlog.vue')
+    },
+    {
         path: '/contact',
         name: 'contact',
         component: () => import('../views/client/ContactPage.vue')
@@ -48,13 +53,16 @@ const routes = [
     {
         path: '/blogs/:blogId',
         name: 'blogdetail',
-        component: () => import('../views/client/BlogDetail.vue')
-    },
-
-    {
-        path: '/post/create',
-        name: 'createpost',
-        component: () => import('../views/client/CreatePost.vue'),
+        children: [
+            {
+                path: '',
+                component: () => import('../views/client/BlogDetail.vue')
+            },
+            {
+                path: 'post/create',
+                component: () => import('../views/client/CreatePost.vue')
+            }
+        ]
     },
     {
         path: '/user/:username',

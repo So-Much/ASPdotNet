@@ -1,64 +1,75 @@
 <script setup>
+import { onBeforeMount, ref } from "vue";
+import { axios } from '@/configs';
+import { useToast } from 'vue-toastification';
+import { useRouter } from 'vue-router';
+import { useLoading } from 'vue-loading-overlay';
 import BlogCard from '@/components/BlogCard.vue';
-import BtnCreate from '@/components/minis/BtnCreate.vue';
-import ModalComponent from "@/components/ModalComponent.vue";
-import { ref } from "vue";
+// import ModalComponent from "@/components/ModalComponent.vue";
 
-const createBlog = () => {
-  console.log("Create Blog");
-}
+const $loading = useLoading();
+const router = useRouter();
+const toast = useToast();
+const blogs = ref();
 
-const showModal = ref(false);
+onBeforeMount(() => {
+  document.title = 'User Blogs';
+
+  if (localStorage.getItem('token')) {
+    const loader = $loading.show();
+    axios.get('/api/User/isloggedin', {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      }
+    }).then(res => {
+      if (res.status === 200) {
+        axios.get('/api/blog/allblogsbyuser', {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token')
+          }
+        }).then(res => {
+          blogs.value = res.data;
+          console.log(blogs)
+          loader.hide();
+        }).catch(err => {
+          console.log(err);
+          loader.hide();
+        })
+      }
+    }).catch(() => {
+      loader.hide();
+      toast.error('Your Token has expired. Please login again');
+      router.push('/login');
+    })
+  }
+});
+
 </script>
 
 <template>
   <div class="userblog">
 
-    <h2 class="userblog_title">Recent Blogs:</h2>
 
     <div class="content-wrapper">
       <div class="container-fluid flex-grow-1 container-p-y">
-        <BtnCreate
-            btnName="Create Blog"
-            :calltofn="createBlog"
-            class="mb-3"
-        />
+
+        <button class="btn btn-primary mb-4" @click="router.push('/blog/create')">
+          CreateBlog
+        </button>
         <div class="row mb-5">
-          <BlogCard
-              title="How to position your furniture for positivity"
-              date="10th Oct 2022"
-              description="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae dolores, possimus
-        pariatur animi temporibus nesciunt praesentium dolore sed nulla ipsum eveniet corporis quidem,  mollitia itaque minus soluta, voluptates neque explicabo tempora nisi culpa eius atque dignissimos. Molestias explicabo corporis voluptatem?"
-          />
-          <BlogCard
-              title="How to position your furniture for positivity"
-              date="10th Oct 2022"
-              description="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae dolores, possimus
-        pariatur animi temporibus nesciunt praesentium dolore sed nulla ipsum eveniet corporis quidem,  mollitia itaque minus soluta, voluptates neque explicabo tempora nisi culpa eius atque dignissimos. Molestias explicabo corporis voluptatem?"
-          />
-          <BlogCard
-              title="How to position your furniture for positivity"
-              date="10th Oct 2022"
-              description="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae dolores, possimus
-        pariatur animi temporibus nesciunt praesentium dolore sed nulla ipsum eveniet corporis quidem,  mollitia itaque minus soluta, voluptates neque explicabo tempora nisi culpa eius atque dignissimos. Molestias explicabo corporis voluptatem?"
+          <BlogCard v-for="(blog, index) in blogs" :key="index"
+          :id="blog.id"
+            :isPushlish="blog.isPublished"
+            :img="blog.image"
+            :title="blog.title"
+            :date="new Date(blog.createAt).toLocaleDateString()"
+            :description="blog.description"
+            :postCount="blog.posts.length"
           />
         </div>
       </div>
     </div>
   </div>
-  <button
-      type="button"
-      class="btn btn-primary"
-      data-bs-toggle="modal"
-      data-bs-target="#modalToggle"
-      @click="showModal = true"
-  >
-    Launch modal
-  </button>
-  <ModalComponent v-model="showModal">
-    <h2>Modal Content</h2>
-    <p>This is a simple modal component in Vue 3!</p>
-  </ModalComponent>
 </template>
 
 <style scoped>
@@ -67,9 +78,5 @@ const showModal = ref(false);
   display: flex;
   flex-direction: column;
   gap: 1rem;
-}
-
-.userblog_title {
-  margin-left: 1.2rem;
 }
 </style>

@@ -66,7 +66,7 @@ namespace BackEnd.utils
                 var imageType = match.Groups[1].Value;
                 var base64Data = match.Groups[2].Value;
                 // Store image with base64 format
-                var filepath = $"post/{user.UID}_{Guid.NewGuid().ToString()}.{imageType}";
+                var filepath = $"post/{user.Name}_{Guid.NewGuid().ToString()}.{imageType}";
                 var imagePath = await ImageProcessing.StoreImageWithBase64Format(base64Data, filepath);
                 //replace base64 image with image static path
                 content.Replace(match.Value, imagePath);

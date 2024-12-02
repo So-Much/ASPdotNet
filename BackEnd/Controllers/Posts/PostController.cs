@@ -40,10 +40,6 @@ namespace BackEnd.Controllers.Posts
                 return BadRequest("Error Get all Posts");
             }
         }
-        public class Params
-        {
-            public string content { get; set; }
-        }
         [Authorize]
         [HttpPost]
         [Consumes("application/x-www-form-urlencoded")]
@@ -68,6 +64,7 @@ namespace BackEnd.Controllers.Posts
                 //_Logger.LogInformation("---------------------------------");
                 string content = form["content"];
                 string title = form["title"];
+                
                 bool isPublished = bool.Parse(form["isPublished"]);
                 string blogId = form["blogId"];
                 List<string> tags = new List<string>();
@@ -115,13 +112,13 @@ namespace BackEnd.Controllers.Posts
                 post.Blog = blog;
                 _DbContext.Posts.Add(post);
                 await _DbContext.SaveChangesAsync();
-                return Ok(updatedContent);
+                return Ok(post);
 
             }
             catch (Exception ex)
             {
                 _Logger.LogError(ex, "Error Create Post");
-                return BadRequest("Error Create Post");
+                return BadRequest("Error Create Post:\n" + ex.ToString());
             }
         }
 
@@ -147,7 +144,7 @@ namespace BackEnd.Controllers.Posts
                 //_Logger.LogInformation($"StaticPath: {StaticPathCollection.GetStaticPath()}");
                 var filename = image.FileName.Split('.')[0];
                 var fileExtension = image.FileName.Split('.')[1];
-                var filepath = $"post/{user.UID}_{filename}_{Guid.NewGuid().ToString()}.{fileExtension}";
+                var filepath = $"post/{user.Name}_{filename}_{Guid.NewGuid().ToString()}.{fileExtension}";
                 //_Logger.LogInformation($"Folder Path: {filepath.Substring(0, filepath.LastIndexOf('/'))}");
                 var imageUrl = await ImageProcessing.StoreImage(image, filepath);
 
@@ -159,39 +156,35 @@ namespace BackEnd.Controllers.Posts
                 return BadRequest("Error Upload Post Image");
             }
         }
-        [Authorize]
-        [HttpGet("allpostsbyuser")]
-        public async Task<ActionResult<IEnumerable<Post>>> GetAllPostsByUser()
-        {
-            try
-            {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var posts = await _DbContext.Blogs
-                    .Where(b => b.Author.UID == userId)
-                    .SelectMany(b => b.Posts)
-                    .ToListAsync();
-                return Ok(posts);
-            }
-            catch (Exception ex)
-            {
-                _Logger.LogError(ex, "Error Get Posts By User");
-                return BadRequest("Error Get Posts By User");
-            }
-        }
-        [HttpGet("getpublishedposts")]
-        public async Task<ActionResult<IEnumerable<Post>>> GetPublishedPosts()
+        //[Authorize]
+        //[HttpGet("allpostsbyuser")]
+        //public async Task<ActionResult<IEnumerable<Post>>> GetAllPostsByUser()
+        //{
+        //    try
+        //    {
+        //        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //        var user = await _DbContext.Users
+        //            .FirstOrDefaultAsync(u => u.UID == userId);
+        //        var blogs = _DbContext.Blogs.
+        //    } catch(Exception ex)
+        //    {
+        //        return StatusCode(500, "Internal server error!");
+        //    }
+        //}
+        [HttpGet("getpostsfromblog")]
+        public async Task<ActionResult<IEnumerable<Post>>> GetPostsFromBlog(int blogId)
         {
             try
             {
                 var posts = await _DbContext.Posts
-                    .Where(p => p.IsPublished)
+                    .Where(p => p.FK_BlogId == blogId)
                     .ToListAsync();
                 return Ok(posts);
             }
             catch (Exception ex)
             {
-                _Logger.LogError(ex, "Error Get Published Posts");
-                return BadRequest("Error Get Published Posts");
+                _Logger.LogError(ex, "Error Get Posts From Blog");
+                return BadRequest("Error Get Posts From Blog");
             }
         }
     }

@@ -1,14 +1,63 @@
 <script setup>
-import { ref } from 'vue';
+import { axios } from '@/configs';
+import { onBeforeMount, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
-const userId = route.params.userId;
+const username = route.params.username;
 const avatar = ref("")
 
-const username = ref("John Doe");
-const userRole = ref("Customer");
+const user = reactive({
+  avatar: "",
+  bio: "",
+  contact: {
+    address: "",
+    email: "",
+    phone: ""
+  },
+  email: "",
+  name: "",
+  password: "",
+  roles: [],
+  uid: "",
+})
+
+onBeforeMount(() => {
+  axios.get('/api/user/information',
+    {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      }
+    }
+  )
+    .then(
+      res => {
+        if (res.status === 200) {
+          avatar.value = res.data.avatar;
+          if (res.data.contact === null) {
+            res.data.contact = {
+              address: "",
+              email: "",
+              phone: ""
+            };
+          }
+          Object.assign(user, res.data);
+          console.log("user:", user)
+        }
+      }
+    )
+})
+
+watch(
+  user,
+  () => {
+    // console.log(newVal)
+    // console.log(oldVal)
+  },
+  { deep: true }
+)
+
 </script>
 
 <template>
@@ -21,51 +70,51 @@ const userRole = ref("Customer");
     <div id="nav-content">
       <!-- add route to it -->
       <div class="nav-button">
-        <router-link class="nav_side_cus" :to="`/user/${userId}/blogs`">
+        <router-link class="nav_side_cus" :to="`/user/${username}/blogs`">
           <i class="fas fa-solid fa-blog"></i><span>Blogs</span>
         </router-link>
       </div>
       <div class="nav-button">
-        <router-link class="nav_side_cus" :to="`/user/${userId}/posts`">
+        <router-link class="nav_side_cus" :to="`/user/${username}/posts`">
           <i class="fas fa-images"></i><span>Posts</span>
         </router-link>
       </div>
 
       <div class="nav-button">
-        <router-link class="nav_side_cus" :to="`/user/${userId}/recent-comments`">
+        <router-link class="nav_side_cus" :to="`/user/${username}/recent-comments`">
           <i class="fas fa-regular fa-comment"></i><span>Recent Comment</span>
         </router-link>
       </div>
 
       <hr />
       <div class="nav-button">
-        <router-link class="nav_side_cus" :to="`/user/${userId}/followers`">
+        <router-link class="nav_side_cus" :to="`/user/${username}/followers`">
           <i class="fas fa-solid fa-users"></i><span>Followers</span>
         </router-link>
       </div>
       <div class="nav-button">
-        <router-link class="nav_side_cus" :to="`/user/${userId}/followings`">
+        <router-link class="nav_side_cus" :to="`/user/${username}/followings`">
           <i class="fas fa-solid fa-user-plus"></i><span>Followings</span>
         </router-link>
       </div>
       <hr />
 
       <div class="nav-button">
-        <router-link class="nav_side_cus" :to="`/user/${userId}/categories`">
+        <router-link class="nav_side_cus" :to="`/user/${username}/categories`">
           <i class="fas fa-solid fa-icons"></i><span>Categories</span>
         </router-link>
       </div>
 
 
       <div class="nav-button">
-        <router-link class="nav_side_cus" :to="`/user/${userId}/trendings`">
+        <router-link class="nav_side_cus" :to="`/user/${username}/trendings`">
           <i class="fas fa-chart-line"></i><span>Trending</span>
         </router-link>
       </div>
 
 
       <div class="nav-button">
-        <router-link class="nav_side_cus" :to="`/user/${userId}/selling`">
+        <router-link class="nav_side_cus" :to="`/user/${username}/selling`">
           <i class="fas fa-fire"></i><span>Selling</span>
         </router-link>
       </div>
@@ -96,15 +145,16 @@ const userRole = ref("Customer");
     <div id="nav-footer">
       <div id="nav-footer-heading">
         <div id="nav-footer-avatar">
-          <img :src="avatar ? avatar : '/png-transparent-default-avatar-thumbnail.png'" @error="e => e.target.src = '/png-transparent-default-avatar-thumbnail.png'" />
+          <img :src="avatar ? avatar : '/png-transparent-default-avatar-thumbnail.png'"
+            @error="e => e.target.src = '/png-transparent-default-avatar-thumbnail.png'" />
         </div>
         <div id="nav-footer-titlebox">
           <router-link @click.prevent="() => {
             router.push(`/user/${userId}`);
-           }" id="nav-footer-title" href="/" target="_blank">
-            {{ username }}
+          }" id="nav-footer-title" href="/" target="_blank">
+            {{ user.name }}
           </router-link>
-          <span id="nav-footer-subtitle">{{ userRole }}</span>
+          <span id="nav-footer-subtitle">{{ user.roles[user.roles.length -1] }}</span>
         </div>
         <label for="nav-footer-toggle"><i class="fas fa-caret-up"></i></label>
       </div>
@@ -429,6 +479,7 @@ label[for=nav-toggle] {
 .nav-button:nth-of-type(8):hover~#nav-content-highlight {
   top: 394px;
 }
+
 .nav-button:nth-of-type(9):hover {
   color: #18283b;
 }
@@ -436,6 +487,7 @@ label[for=nav-toggle] {
 .nav-button:nth-of-type(9):hover~#nav-content-highlight {
   top: 448px;
 }
+
 .nav-button:nth-of-type(10):hover {
   color: #18283b;
 }
@@ -443,6 +495,7 @@ label[for=nav-toggle] {
 .nav-button:nth-of-type(10):hover~#nav-content-highlight {
   top: 502px;
 }
+
 .nav-button:nth-of-type(11):hover {
   color: #18283b;
 }
@@ -544,6 +597,7 @@ label[for=nav-footer-toggle] {
   border-radius: 99px;
   background-color: #BCF2F6;
 }
+
 #nav-footer-content .user_info {
   width: 100%;
   background-color: transparent;

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace BackEnd.Database.Tables
 {
@@ -13,11 +14,10 @@ namespace BackEnd.Database.Tables
         public int NumLikes { get; set; }
         public int NumDislike { get; set; }
         public bool IsPublished { get; set; }
-        public string ShareLink { get; set; }
         public List<string> Hashtags { get; set; }
         public DateTime CreateAt { get; set; }
-
         public int? FK_BlogId { get; set; }
+        [JsonIgnore]
         public Blog? Blog { get; set; }
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }

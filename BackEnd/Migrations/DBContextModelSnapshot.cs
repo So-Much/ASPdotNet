@@ -158,10 +158,6 @@ namespace BackEnd.Migrations
                     b.Property<int>("NumLikes")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ShareLink")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");

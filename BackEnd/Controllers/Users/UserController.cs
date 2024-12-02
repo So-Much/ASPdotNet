@@ -109,28 +109,86 @@ namespace BackEnd.Controllers.Users
                 return StatusCode(500, "Error when add user!");
             }
         }
-        [Authorize(Roles = "ADMIN")]
+        [Authorize]
         [HttpPut("{UID}")]
         public async Task<ActionResult<User>> PutUser(string UID, User user)
         {
-            if (UID != user.UID)
-            {
-                return BadRequest();
-            }
             try
             {
-                //change information of that user and save that user to return for update client side
-                _DbContext.Entry(user).State = EntityState.Modified;
-                await _DbContext.SaveChangesAsync();
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var userRequest = await _DbContext.Users
+                    .Include(u => u.Contact) // Nếu có navigation property
+                    .FirstOrDefaultAsync(u => u.UID == userId);
 
+                if (userRequest == null)
+                {
+                    return NotFound();
+                }
+
+                if (userRequest.UID.Equals(user.UID))
+                {
+                    // Chỉ cập nhật các trường không mặc định
+                    if (!string.IsNullOrEmpty(user.Bio))
+                        userRequest.Bio = user.Bio;
+
+                    if (!string.IsNullOrEmpty(user.Name))
+                        userRequest.Name = user.Name;
+
+                    // Cập nhật Contact nếu có
+                    if (user.Contact != null)
+                    {
+                        if (userRequest.Contact == null)
+                            userRequest.Contact = new Contact(); // Nếu Contact ban đầu null, tạo mới
+
+                        if (!string.IsNullOrEmpty(user.Contact.Location))
+                            userRequest.Contact.Location = user.Contact.Location;
+
+                        if (!string.IsNullOrEmpty(user.Contact.PhoneNumber))
+                            userRequest.Contact.PhoneNumber = user.Contact.PhoneNumber;
+                    }
+
+                    await _DbContext.SaveChangesAsync();
+                    return Ok(userRequest);
+                }
+                else
+                {
+                    var isAdmin = userRequest.Roles.Contains(UserRoles.ADMIN);
+                    if (isAdmin)
+                    {
+                        // Tương tự xử lý cập nhật từng trường cho admin
+                        _Logger.LogInformation("User is Admin update user to db\n----------------------------------------------");
+                        if (!string.IsNullOrEmpty(user.Bio))
+                            userRequest.Bio = user.Bio;
+
+                        if (!string.IsNullOrEmpty(user.Name))
+                            userRequest.Name = user.Name;
+
+                        if (user.Contact != null)
+                        {
+                            if (userRequest.Contact == null)
+                                userRequest.Contact = new Contact();
+
+                            if (!string.IsNullOrEmpty(user.Contact.Location))
+                                userRequest.Contact.Location = user.Contact.Location;
+
+                            if (!string.IsNullOrEmpty(user.Contact.PhoneNumber))
+                                userRequest.Contact.PhoneNumber = user.Contact.PhoneNumber;
+                        }
+
+                        await _DbContext.SaveChangesAsync();
+                        return Ok(userRequest);
+                    }
+
+                    return Unauthorized("User isn't enough permission to change user data!");
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message.ToString());
-                return StatusCode(500, "Error when update user!");
+                return StatusCode(500, $"user: {user.ToString()}");
             }
-            return Ok(user);
         }
+
         [Authorize(Roles = "ADMIN")]
         [HttpDelete("{UID}")]
         public async Task<ActionResult<User>> DeleteUser(string UID)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -7,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BackEnd.Migrations
 {
     /// <inheritdoc />
-    public partial class init_database : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -36,6 +37,7 @@ namespace BackEnd.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Avatar = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     UID = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     Email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
@@ -63,7 +65,7 @@ namespace BackEnd.Migrations
                     Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Image = table.Column<string>(type: "text", nullable: false),
-                    CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreateAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     IsPublished = table.Column<bool>(type: "boolean", nullable: false),
                     FK_UserId = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -106,14 +108,13 @@ namespace BackEnd.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Title = table.Column<string>(type: "text", nullable: false),
                     Content = table.Column<string>(type: "text", nullable: false),
-                    Images = table.Column<string[]>(type: "text[]", nullable: false),
-                    Videos = table.Column<string[]>(type: "text[]", nullable: false),
+                    Images = table.Column<List<string>>(type: "text[]", nullable: false),
+                    Videos = table.Column<List<string>>(type: "text[]", nullable: false),
                     NumLikes = table.Column<int>(type: "integer", nullable: false),
                     NumDislike = table.Column<int>(type: "integer", nullable: false),
                     IsPublished = table.Column<bool>(type: "boolean", nullable: false),
-                    ShareLink = table.Column<string>(type: "text", nullable: false),
-                    Hashtags = table.Column<string[]>(type: "text[]", nullable: false),
-                    CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Hashtags = table.Column<List<string>>(type: "text[]", nullable: false),
+                    CreateAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     FK_BlogId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>

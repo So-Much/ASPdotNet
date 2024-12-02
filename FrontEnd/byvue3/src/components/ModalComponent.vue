@@ -1,3 +1,45 @@
+
+<script setup>
+import { ref, watch, defineProps, defineEmits } from 'vue';
+
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true,
+  },
+  modalTitle: {
+    type: String,
+    required: true
+  },
+  onClosed: {
+    type: Function,
+    required: true
+  }
+});
+
+const emit = defineEmits(["update:modelValue"]);
+
+const isOpen = ref(props.modelValue);
+watch(
+    () => props.modelValue,
+    ( newValue ) => {
+      isOpen.value = newValue;
+    }
+);
+
+const close = () => {
+  isOpen.value = false;
+  emit("update:modelValue", false);
+};
+
+const saveChange = () => {
+  console.log("Save Changes");
+  close();
+  if (props?.onClosed) {
+    props.onClosed();
+  }
+};
+</script>
 <template>
   <div
       v-if="isOpen"
@@ -12,7 +54,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h5 class="modal-title" id="modalToggleLabel">Edit Blog {{ id }}</h5>
+          <h5 class="modal-title" id="modalToggleLabel">{{ modalTitle }}</h5>
           <button
               type="button"
               class="btn-close"
@@ -40,46 +82,6 @@
   </div>
 </template>
 
-<script setup>
-import { ref, watch, defineProps, defineEmits } from 'vue';
-
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    required: true,
-  },
-  id: {
-    type: String,
-    required:true
-  },
-  onClosed: {
-    type: Function,
-    required: true
-  }
-});
-const emit = defineEmits(["update:modelValue"]);
-
-const isOpen = ref(props.modelValue);
-watch(
-    () => props.modelValue,
-    ( newValue ) => {
-      isOpen.value = newValue;
-    }
-);
-
-const close = () => {
-  isOpen.value = false;
-  emit("update:modelValue", false);
-};
-
-const saveChange = () => {
-  console.log("Save Changes");
-  close();
-  if (props?.onClosed) {
-    props.onClosed();
-  }
-};
-</script>
 
 <style scoped>
 @import '@/assets/vendor/css/core.css';
