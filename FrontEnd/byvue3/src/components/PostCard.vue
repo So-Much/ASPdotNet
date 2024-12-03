@@ -2,6 +2,7 @@
 <script setup>
 import { computed } from 'vue';
 import { toRefs, defineProps } from 'vue';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
   title: String,
@@ -19,20 +20,22 @@ const props = defineProps({
   ispublished: Boolean,
   hashtags: Array,
   createdat: String,
-  carouselId: {
-    type: String,
+  postId: {
+    type: Number,
     required: true,
   },
 });
 
 const { createdat } = toRefs(props);
 
+const router = useRouter();
+
 const formattedDate = computed(() => {
   return new Date(createdat.value).toLocaleDateString();
 });
 
 const onCardClick = () => {
-  console.log(props.blogId, "onCard")
+  router.push(`/post/${props.title}?id=${props.postId}`);
 }
 
 </script>

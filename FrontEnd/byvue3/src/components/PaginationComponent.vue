@@ -48,11 +48,9 @@ const pages = computed(() => {
     <nav class="pagination " aria-label="Pagination">
         <ol class="pagination__list pt4-flex pt4-flex-wrap pt4-gap-3xs pt4-justify-center">
             <li>
-                <router-link
-                :to="`?page=1`"
-                :class="['pagination__item', {'pagination__item--disabled' : props.currentPage === 1}]" 
-                aria-label="Go to previous page"
-                >
+                <router-link :to="`?page=1`"
+                    :class="['pagination__item', { 'pagination__item--disabled': props.currentPage === 1 }]"
+                    aria-label="Go to previous page">
                     <svg class="pt4-icon pt4-icon--xs pt4-margin-right-3xs pt4-flip-x" viewBox="0 0 16 16">
                         <polyline points="6 2 12 8 6 14" fill="none" stroke="currentColor" stroke-linecap="round"
                             stroke-linejoin="round" stroke-width="2" />
@@ -61,11 +59,9 @@ const pages = computed(() => {
                 </router-link>
             </li>
             <li>
-                <router-link
-                :to="`?page=${props.currentPage - 1}`"
-                :class="['pagination__item', {'pagination__item--disabled' : props.currentPage === 1}]" 
-                aria-label="Go to previous page"
-                >
+                <router-link :to="`?page=${props.currentPage - 1}`"
+                    :class="['pagination__item', { 'pagination__item--disabled': props.currentPage === 1 }]"
+                    aria-label="Go to previous page">
                     <svg class="pt4-icon pt4-icon--xs pt4-margin-right-3xs pt4-flip-x" viewBox="0 0 16 16">
                         <polyline points="6 2 12 8 6 14" fill="none" stroke="currentColor" stroke-linecap="round"
                             stroke-linejoin="round" stroke-width="2" />
@@ -73,50 +69,36 @@ const pages = computed(() => {
                     <span>Prev</span>
                 </router-link>
             </li>
-            <li class="pt4-display@sm"
-            aria-hidden="true" 
-            v-if="props.totalPages >= 5 && props.currentPage >= 3"
-            >
-                <span class="pagination__item pagination__item--ellipsis">1</span>
+            <li class="pt4-display@sm" aria-hidden="true" v-if="props.totalPages >= 5 && props.currentPage >= 3">
+                <router-link to="?page=1" class="pagination__item pagination__item--ellipsis" aria-label="Go to page 1">1</router-link>
+                <!-- <span class="pagination__item pagination__item--ellipsis">1</span> -->
             </li>
-            <li class="pt4-display@sm"
-            aria-hidden="true" 
-            v-if="props.totalPages >= 5 && props.currentPage >= 4"
-            >
+            <li class="pt4-display@sm" aria-hidden="true" v-if="props.totalPages >= 5 && props.currentPage >= 4">
                 <span class="pagination__item pagination__item--ellipsis">...</span>
             </li>
             <li v-for="page in pages" :key="page" :v-if="props.totalPages <= 4">
-                <router-link
-                :to="`?page=${page}`" 
-                :class="['pagination__item',{'pagination__item--selected' : page === props.currentPage}]"
-                :aria-label="`Go to page ${ page }`"
-                >
+                <router-link :to="`?page=${page}`"
+                    :class="['pagination__item', { 'pagination__item--selected': page === props.currentPage }]"
+                    :aria-label="`Go to page ${page}`">
                     {{ page }}
                 </router-link>
             </li>
-            <li class="pt4-display@sm"
-            aria-hidden="true" 
-            v-if="props.totalPages >= 5 && props.totalPages - props.currentPage >= 3"
-            >
+            <li class="pt4-display@sm" aria-hidden="true"
+                v-if="props.totalPages >= 5 && props.totalPages - props.currentPage >= 3">
                 <span class="pagination__item pagination__item--ellipsis">...</span>
             </li>
 
-            <li class="pt4-display@sm"
-            v-if="props.totalPages - props.currentPage >= 2">
-                <router-link 
-                :to="`?page=${props.totalPages}`"
-                class="pagination__item" 
-                :aria-label="`Go to page ${props.totalPages}`">
-                {{ props.totalPages }}
-            </router-link>
+            <li class="pt4-display@sm" v-if="props.totalPages - props.currentPage >= 2">
+                <router-link :to="`?page=${props.totalPages}`" class="pagination__item"
+                    :aria-label="`Go to page ${props.totalPages}`">
+                    {{ props.totalPages }}
+                </router-link>
             </li>
 
             <li>
-                <router-link
-                :to="`?page=${props.currentPage + 1}`"
-                :class="['pagination__item', {'pagination__item--disabled' : props.currentPage === props.totalPages}]" 
-                aria-label="Go to next page"
-                >
+                <router-link :to="`?page=${props.currentPage + 1}`"
+                    :class="['pagination__item', { 'pagination__item--disabled': props.currentPage === props.totalPages }]"
+                    aria-label="Go to next page">
                     <span>Next</span>
                     <svg class="pt4-icon pt4-icon--xs pt4-margin-left-3xs" viewBox="0 0 16 16">
                         <polyline points="6 2 12 8 6 14" fill="none" stroke="currentColor" stroke-linecap="round"
@@ -125,11 +107,9 @@ const pages = computed(() => {
                 </router-link>
             </li>
             <li>
-                <router-link
-                :to="`?page=${props.totalPages}`"
-                :class="['pagination__item', {'pagination__item--disabled' : props.currentPage === props.totalPages}]" 
-                aria-label="Go to next page"
-                >
+                <router-link :to="`?page=${props.totalPages}`"
+                    :class="['pagination__item', { 'pagination__item--disabled': props.currentPage === props.totalPages }]"
+                    aria-label="Go to next page">
                     <span>To The Last</span>
                     <svg class="pt4-icon pt4-icon--xs pt4-margin-left-3xs" viewBox="0 0 16 16">
                         <polyline points="6 2 12 8 6 14" fill="none" stroke="currentColor" stroke-linecap="round"

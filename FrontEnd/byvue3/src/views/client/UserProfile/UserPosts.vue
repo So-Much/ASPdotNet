@@ -133,7 +133,7 @@ onBeforeMount(() => {
           <div class="row mb-5">
             <div v-for="post in blog.posts" :key="post.Id" class="col col-12 col-md-6 col-lg-4">
               <!--              link to post detail-->
-              <PostCard :carouselId="post.id" :blogId="blog.id" :title="post.title" :content="post.content" :images="post.images"
+              <PostCard :postId="post.id" :blogId="blog.id" :title="post.title" :content="post.content" :images="post.images"
                 :numlikes="post.numLikes" :numdislike="post.numDislike" :ispublished="post.isPublished"
                 :hashtags="post.hashtags" :createdat="post.createAt" />
             </div>

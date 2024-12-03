@@ -2,11 +2,13 @@
 import { axios } from '@/configs';
 import { onBeforeMount, reactive } from 'vue';
 import { useLoading } from 'vue-loading-overlay';
+import { useRouter } from 'vue-router';
 // import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 
 const $loading = useLoading();
 const toast = useToast();
+const router = useRouter();
 // const router = useRouter();
 // const route = useRoute();
 
@@ -46,12 +48,14 @@ const originalUser = reactive({
 
 onBeforeMount(() => {
   document.title = 'User Profile';
+  const loader = $loading.show();
   axios.get('/api/user/information', {
     headers: {
       Authorization: 'Bearer ' + localStorage.getItem('token')
     }
   })
     .then(res => {
+      loader.hide();
       if (res.status === 200) {
         user.avatar = res.data.avatar;
         user.bio = res.data.bio;
@@ -70,6 +74,9 @@ onBeforeMount(() => {
       }
     })
     .catch(err => {
+      loader.hide();
+      router.push('/login');
+      toast.error("Token is Expired!");
       console.error("Error fetching user data:", err);
     });
 });
@@ -97,6 +104,7 @@ const SubmidChangeUserInfor = () => {
           loader.hide();
           // console.log(res.data);
           toast.success('User information updated successfully');
+          resetLayout();
           // Update originalUser to the new values
           Object.assign(originalUser, JSON.parse(JSON.stringify(user)));
         }
@@ -129,6 +137,7 @@ const uploadavatar = (e) => {
           // console.log(res.data);
           user.avatar = res.data;
           loader.hide();
+          toast.success('Avatar uploaded successfully');
           resetLayout();
         })
         .catch((err) => {

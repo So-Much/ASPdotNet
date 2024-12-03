@@ -65,6 +65,11 @@ const routes = [
         ]
     },
     {
+        path: '/post/:title',
+        name: 'postdetail',
+        component: () => import('../views/client/PostDetail.vue')
+    },
+    {
         path: '/user/:username',
         name: 'userprofile',
         component: () => import('../views/client/UserProfile.vue'),
@@ -145,7 +150,7 @@ const routes = [
         name: 'unauthorized',
         component: () => import('../views/exceptionpages/NotAuthorized.vue')
     }
-    , {
+    ,{
         path: '/:catchAll(.*)',
         name: 'notfound',
         component: () => import('../views/exceptionpages/PageNotFound.vue')
