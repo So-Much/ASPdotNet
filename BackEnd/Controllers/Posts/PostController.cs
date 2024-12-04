@@ -60,7 +60,7 @@ namespace BackEnd.Controllers.Posts
             //Comments
             try
             {
-                string hashtagPattern = @"(?<=@)[a-z0-9]+(?=\s)";
+                string hashtagPattern = @"#[a-z0-9_]+";
                 //_Logger.LogInformation("---------------------------------");
                 string content = form["content"];
                 string title = form["title"];
@@ -185,6 +185,131 @@ namespace BackEnd.Controllers.Posts
             {
                 _Logger.LogError(ex, "Error Get Posts From Blog");
                 return BadRequest("Error Get Posts From Blog");
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Post>> GetPostById(int id)
+        {
+            try
+            {
+                var post = await _DbContext.Posts
+                    .Include(p => p.Blog)
+                    //.Include(p => p.Comments)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+                if(post == null)
+                {
+                    return NotFound("Post is not found");
+                }
+
+                ////begin
+
+
+                //string content = post.Content;
+                //var imageUrls = new List<string>();
+                //var videoUrls = new List<string>();
+                //// Pattern to match base64 images
+                //string pattern = @"data:image\/([a-zA-Z]*);base64,([^\""]*)";
+
+                ////Find all matches in content
+                //MatchCollection matches = Regex.Matches(content, pattern);
+                ////with any match -> restore this picture and store it to uploads folder
+                //foreach (Match match in matches)
+                //{
+                //    var imageType = match.Groups[1].Value;
+                //    var base64Data = match.Groups[2].Value;
+                //    // Store image with base64 format
+                //    var filepath = $"test/post/_{Guid.NewGuid().ToString()}.{imageType}";
+                //    var imagePath = await ImageProcessing.StoreImageWithBase64Format(base64Data, filepath);
+                //    //replace base64 image with image static path
+                //    content = content.Replace(match.Value, imagePath);
+                //    imageUrls.Add(imagePath);
+                //}
+
+                ////end
+
+                return Ok(post);
+            } catch(Exception ex)
+            {
+                return StatusCode(500, "Internal server error!");
+            }
+        }
+        [HttpPut("{id}")]
+        [Authorize]
+        [Consumes("application/x-www-form-urlencoded")]
+        public async Task<ActionResult<Post>> UpdatePost(int id, [FromForm] IFormCollection form)
+        {
+            try
+            {
+                string hashtagPattern = @"#[a-z0-9_]+";
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var user = await _DbContext.Users
+                    .FirstOrDefaultAsync(u => u.UID == userId);
+                if (user == null)
+                {
+                    return Unauthorized("User not found");
+                }
+                var post = await _DbContext.Posts
+                    .Where(p => p.Blog.Author.Id == user.Id)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+                if (post == null)
+                {
+                    return Unauthorized("Post not found");
+                }
+
+                var content = form["content"];
+                var isPublished = bool.Parse(form["isPublished"]);
+
+                List<string> tags = new List<string>();
+                foreach (Match match in Regex.Matches(content, hashtagPattern))
+                {
+                    tags.Add(match.Value);
+                }
+                //handle Content before update
+                var (updatedContent, imageUrls, videoUrls) = await ImageProcessing.ProcessImagesAndVideos(content, user);
+
+                post.Content = updatedContent;
+                post.IsPublished = isPublished;
+                post.Hashtags = tags;
+                post.Images = imageUrls;
+                post.Videos = videoUrls;
+
+                await _DbContext.SaveChangesAsync();
+
+                return Ok(post);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error!");
+            }
+        }
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Post>> DeletePost(int id)
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var user = await _DbContext.Users
+                    .FirstOrDefaultAsync(u => u.UID == userId);
+                if (user == null)
+                {
+                    return Unauthorized("User not found");
+                }
+                var post = await _DbContext.Posts
+                    .Where(p => p.Blog.Author.Id == user.Id)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+                if (post == null)
+                {
+                    return Unauthorized("Post not found");
+                }
+                _DbContext.Posts.Remove(post);
+                await _DbContext.SaveChangesAsync();
+                return Ok(post);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error!");
             }
         }
     }

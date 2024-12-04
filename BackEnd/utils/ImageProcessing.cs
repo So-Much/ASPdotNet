@@ -69,7 +69,7 @@ namespace BackEnd.utils
                 var filepath = $"post/{user.Name}_{Guid.NewGuid().ToString()}.{imageType}";
                 var imagePath = await ImageProcessing.StoreImageWithBase64Format(base64Data, filepath);
                 //replace base64 image with image static path
-                content.Replace(match.Value, imagePath);
+                content = content.Replace(match.Value, imagePath);
                 imageUrls.Add(imagePath);
             }
             return (content, imageUrls, videoUrls);

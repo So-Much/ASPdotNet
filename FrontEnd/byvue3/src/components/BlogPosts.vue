@@ -1,9 +1,12 @@
 <script setup>
-import { onMounted, onUnmounted, computed, ref } from 'vue';
+import { onMounted, onUnmounted, computed, ref, onBeforeMount, watch } from 'vue';
 import { injectMainJS, removeMainJS } from '@/utils/asynchronous';
 import PostItem from './minis/PostItem.vue';
 import PaginationComponent from './PaginationComponent.vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import { axios } from '@/configs';
+import { useToast } from 'vue-toastification';
+import { useLoading } from 'vue-loading-overlay';
 
 onMounted(() => {
     injectMainJS();
@@ -11,10 +14,92 @@ onMounted(() => {
 onUnmounted(() => {
     removeMainJS();
 });
-const route = useRoute();
-const currentPage = computed(() => parseInt(route.query.page || 1))
-const totalPages = ref(10);
 
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const pad = (num) => num.toString().padStart(2, '0');
+    return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
+};
+
+
+const currentPage = computed(() => parseInt(route.query.page || 1))
+const pageSize = ref(9);
+const totalPages = ref(0);
+// const numpages = computed(() => Array.from({ length: totalPages.value }, (_, i) => i + 1));
+
+const route = useRoute();
+const blogId = route.params.blogId;
+const router = useRouter();
+const toast = useToast();
+const $loading = useLoading();
+
+const posts = ref();
+const popularPosts = ref();
+const hashtags = ref();
+
+console.log("🚀 ~ toast:", toast)
+console.log("🚀 ~ router:", router)
+
+onBeforeMount(()=> {
+    const loader = $loading.show();
+    axios.get(`/api/blog/${blogId}/getpublishposts?page=${currentPage.value}&limit=${pageSize.value}`)
+    .then(res => {
+        console.log(res);
+        posts.value = res.data;
+        const pagination = JSON.parse(res.headers['x-pagination']);
+        totalPages.value = pagination.TotalPages;
+        loader.hide();
+    })
+    .catch(err => {
+        loader.hide();
+        console.log(err);
+    })
+
+    const loaderPopularPost = $loading.show();
+    axios.get(`/api/blog/${blogId}/getpopularposts`)
+    .then(res => {
+        console.log(res);
+        popularPosts.value = res.data;
+        loaderPopularPost.hide();
+    })
+    .catch(err => {
+        popularPosts.value = [];
+        loaderPopularPost.hide();
+        console.log(err);
+    })
+    const topHashTagLoader = $loading.show();
+    axios.get(`/api/blog/${blogId}/gettophasgtag`)
+    .then(res => {
+        console.log(res);
+        hashtags.value = res.data;
+        topHashTagLoader.hide();
+    })
+    .catch(err => {
+        hashtags.value = [];
+        topHashTagLoader.hide();
+        console.log(err);
+    })
+})
+
+const hashtagFIlter = ref();
+
+watch(
+    hashtagFIlter,
+    (newVal, oldVal) => {
+        console.log("🚀 ~ oldVal:", oldVal)
+        const loader = $loading.show();
+        axios.get(`/api/blog/${blogId}/getpostbyhashtag?hashtag=${newVal}`)
+        .then(res => {
+            console.log(res);
+            posts.value = res.data;
+            loader.hide();
+        })
+        .catch(err => {
+            loader.hide();
+            console.log(err);
+        })
+    }
+)
 
 </script>
 
@@ -25,25 +110,9 @@ const totalPages = ref(10);
                 <div class="col-lg-8">
                     <div class="all-blog-posts">
                         <div class="row">
-                            <div class="col-lg-6">
-                                <PostItem />
+                            <div v-for="post in posts" :key="post.id" class="col-lg-6">
+                                <PostItem :post="post" :blogId="blogId" />
                             </div>
-                            <div class="col-lg-6">
-                                <PostItem />
-                            </div>
-                            <div class="col-lg-6">
-                                <PostItem />
-                            </div>
-                            <div class="col-lg-6">
-                                <PostItem />
-                            </div>
-                            <div class="col-lg-6">
-                                <PostItem />
-                            </div>
-                            <div class="col-lg-6">
-                                <PostItem />
-                            </div>
-                            
                             <div class="col-lg-12 pagination">
                                 <PaginationComponent
                                 :totalPages="totalPages"
@@ -66,29 +135,21 @@ const totalPages = ref(10);
                             <div class="col-lg-12">
                                 <div class="sidebar-item recent-posts">
                                     <div class="sidebar-heading">
-                                        <h2>Recent Posts</h2>
+                                        <h2>Popular Post</h2>
                                     </div>
                                     <div class="content">
                                         <ul>
-                                            <li><a href="post-details.html">
-                                                    <h5>Vestibulum id turpis porttitor sapien facilisis scelerisque</h5>
-                                                    <span>May 31, 2020</span>
-                                                </a></li>
-                                            <li><a href="post-details.html">
-                                                    <h5>Suspendisse et metus nec libero ultrices varius eget in risus
-                                                    </h5>
-                                                    <span>May 28, 2020</span>
-                                                </a></li>
-                                            <li><a href="post-details.html">
-                                                    <h5>Swag hella echo park leggings, shaman cornhole ethical coloring
-                                                    </h5>
-                                                    <span>May 14, 2020</span>
-                                                </a></li>
+                                            <li v-for="post in popularPosts" :key="post.id">
+                                                <router-link :to="`/blogs/${blogId}/post/${post.id}`">
+                                                    <h5>{{ post.title }}</h5>
+                                                    <span>{{ formatDate(post.createAt) }}</span>
+                                                </router-link>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-12">
+                            <!-- <div class="col-lg-12">
                                 <div class="sidebar-item categories">
                                     <div class="sidebar-heading">
                                         <h2>Categories</h2>
@@ -104,7 +165,7 @@ const totalPages = ref(10);
                                         </ul>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="col-lg-12">
                                 <div class="sidebar-item tags">
                                     <div class="sidebar-heading">
@@ -112,13 +173,12 @@ const totalPages = ref(10);
                                     </div>
                                     <div class="content">
                                         <ul>
-                                            <li><a href="#">Lifestyle</a></li>
-                                            <li><a href="#">Creative</a></li>
-                                            <li><a href="#">HTML5</a></li>
-                                            <li><a href="#">Inspiration</a></li>
-                                            <li><a href="#">Motivation</a></li>
-                                            <li><a href="#">PSD</a></li>
-                                            <li><a href="#">Responsive</a></li>
+                                            <li v-for="(hashtag, index) in hashtags" :key="index">
+                                                <a href="#" @click.prevent="() => {
+                                                    hashtagFIlter.value = hashtag.hashtag;
+                                                }" >{{ hashtag.hashtag }}</a>
+                                            </li>
+                                            
                                         </ul>
                                     </div>
                                 </div>

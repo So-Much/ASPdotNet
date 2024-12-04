@@ -20,7 +20,6 @@ onUnmounted(() => {
 const currentPage = computed(() => parseInt(route.query.page || 1))
 const pageSize = ref(10);
 const totalPages = ref(0);
-
 const numpages = computed(() => Array.from({ length: totalPages.value }, (_, i) => i + 1));
 
 const blogs = ref([]);

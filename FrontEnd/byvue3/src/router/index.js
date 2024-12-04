@@ -61,6 +61,10 @@ const routes = [
             {
                 path: 'post/create',
                 component: () => import('../views/client/CreatePost.vue')
+            },
+            {
+                path: 'post/:postId',
+                component: () => import('../views/client/PostPublicDetail.vue')
             }
         ]
     },

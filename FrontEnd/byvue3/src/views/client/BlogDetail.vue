@@ -8,8 +8,11 @@ import { axios } from '@/configs';
 import { injectMainJS, removeMainJS } from '@/utils/asynchronous';
 import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
 import { useLoading } from 'vue-loading-overlay';
-import { useRoute, useRouter } from 'vue-router';
-import { useToast } from 'vue-toastification';
+import {
+    useRoute,
+    // useRouter
+} from 'vue-router';
+// import { useToast } from 'vue-toastification';
 // import { computed } from 'vue';
 // import { useRoute } from 'vue-router';
 
@@ -20,14 +23,10 @@ onUnmounted(() => {
     removeMainJS();
 });
 
-const router = useRouter();
+// const router = useRouter();
 const route = useRoute();
 const $loading = useLoading();
-const toast = useToast();
-console.log("🚀 ~ route:", route)
-console.log("🚀 ~ loading:", $loading)
-console.log("🚀 ~ toast:", toast)
-console.log("🚀 ~ router:", router)
+// const toast = useToast();
 const blogId = route.params.blogId;
 const blog = ref();
 
