@@ -27,18 +27,18 @@ const blogs = ref([]);
 
 onBeforeMount(() => {
     axios.get(`/api/blog/getpublishedblogs?page=${currentPage.value}&limit=${pageSize.value}`)
-    .then(res => {
-        console.log("🚀 ~ onBeforeMount ~ res:", res)
-        blogs.value = res.data;
-        const pagination = JSON.parse(res.headers['x-pagination']);
-        totalPages.value = pagination.TotalPages;
-        console.log("🚀 ~ onBeforeMount ~ blogs:", blogs)
-        console.log("🚀 ~ onBeforeMount ~ pagination:", pagination)
-        console.log("🚀 ~ onBeforeMount ~ totalPages:", totalPages)
-    })
-    .catch(err => {
-        console.log(err);
-    })
+        .then(res => {
+            console.log("🚀 ~ onBeforeMount ~ res:", res)
+            blogs.value = res.data;
+            const pagination = JSON.parse(res.headers['x-pagination']);
+            totalPages.value = pagination.TotalPages;
+            console.log("🚀 ~ onBeforeMount ~ blogs:", blogs)
+            console.log("🚀 ~ onBeforeMount ~ pagination:", pagination)
+            console.log("🚀 ~ onBeforeMount ~ totalPages:", totalPages)
+        })
+        .catch(err => {
+            console.log(err);
+        })
 })
 
 </script>
@@ -57,22 +57,7 @@ onBeforeMount(() => {
             </svg>
             <input placeholder="Search" type="search" class="input">
         </div>
-        <div class="categories_list">
-            <div class="checkbox-wrapper-10">
-                <input checked="" type="checkbox" id="cb5" class="tgl tgl-flip">
-                <label for="cb5" data-tg-on="Yeah!" data-tg-off="Nope" class="tgl-btn"></label>
-            </div>
-            <div class="checkbox-wrapper-10">
-                <input checked="" type="checkbox" id="cb6" class="tgl tgl-flip">
-                <label for="cb6" data-tg-on="Yeah!" data-tg-off="Nope" class="tgl-btn"></label>
-                <!-- <input checked="" type="checkbox" id="cb8" class="tgl tgl-flip">
-                <label for="cb8" data-tg-on="Yeah!" data-tg-off="Nope" class="tgl-btn"></label> -->
-            </div>
-            <div class="checkbox-wrapper-10">
-                <input checked="" type="checkbox" id="cb7" class="tgl tgl-flip">
-                <label for="cb7" data-tg-on="Yeah!" data-tg-off="Nope" class="tgl-btn"></label>
-            </div>
-        </div>
+        
 
     </div>
 
@@ -82,8 +67,7 @@ onBeforeMount(() => {
             <div class="row">
                 <div class="col-lg-4 col-sm-6" v-for="(blog) in blogs" :key="blog.id">
                     <BlogItem :blogId="blog.blogId" :blog_metadata="blog.image" :blog_date="blog.createAt"
-                        :blog_title="blog.title"
-                        :blog_description="blog.description"
+                        :blog_title="blog.title" :blog_description="blog.description"
                         :blog_categories="blog.topHashtags" />
                 </div>
             </div>

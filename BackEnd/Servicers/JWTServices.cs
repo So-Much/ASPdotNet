@@ -12,24 +12,23 @@ namespace BackEnd.Servicers
     {
         public static string GenerateJwtToken(UserDTO user)
         {
+            // get jwt key from enviroment variables
             var env = new EnviromentVariables();
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(env.GetJwtKey());
-            //new Claim[]
-            //    {
-            //        // Lấy UID từ token
-            //        //var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            //    }
+            // create claims from the token handler and add them to the token handler
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.UID),
                     //email bonus - unique email of user
                     new Claim(ClaimTypes.Email, user.Email)
             };
+            // add roles to the claims
             foreach (var role in user.Roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
+            // create the token descriptor
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
@@ -38,6 +37,7 @@ namespace BackEnd.Servicers
                 Issuer = "http://localhost:5144",
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
+            // create the token
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }

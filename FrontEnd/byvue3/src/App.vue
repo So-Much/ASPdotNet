@@ -1,4 +1,10 @@
 <script setup>
+import { onMounted } from 'vue';
+
+
+onMounted(() => {
+  document.title = "BlogPots";
+});
 
 </script>
 
